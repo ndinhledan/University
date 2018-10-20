@@ -6,20 +6,105 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.io.Serializable;
+import java.io.IOException;
 
-public class Course implements Serializable{
-	private String code; //course code e.g CZ2002
-	private String name;
-	private boolean hasTut;
-	private boolean hasLab;
-	private Professor coordinator;
-	private int exam;
-	private Map<String, Integer> coursework = new HashMap<String, Integer>();
-	private int vacancy;;
-	private ArrayList<Tutorial> tuts = new ArrayList<Tutorial>();
-	private ArrayList<Lab> labs = new ArrayList<Lab>();
-	private Map<Student, String> students = new HashMap<Student, String>();
-	private static final long serialVersionUID = -3914670736074682579L;
+	public class Course implements Serializable{
+		private String code; //course code e.g CZ2002
+		private String name;
+		private boolean hasTut;
+		private boolean hasLab;
+		private Professor coordinator;
+		private int exam;
+		private Map<String, Integer> coursework = new HashMap<String, Integer>();
+		private int vacancy;;
+		private ArrayList<Tutorial> tuts = new ArrayList<Tutorial>();
+		private ArrayList<Lab> labs = new ArrayList<Lab>();
+		private Map<Student, String> students = new HashMap<Student, String>();
+		private static final long serialVersionUID = -3914670736074682579L;
+
+		public class Tutorial implements Serializable{
+		private String index;
+		private int vacancy;
+		private int reg;
+		private ArrayList<Student> students = new ArrayList<Student>();
+
+		public Tutorial(){}
+
+		public Tutorial(String index){
+			this.index = index;
+			vacancy =10;
+			reg =0;
+		}
+		public Tutorial(String index, int vacancy){
+			this.index = index;
+			this.vacancy = vacancy;
+			reg=0;
+		}
+
+		public String getIndex(){
+			return index;
+		}
+
+		public int getVacancy(){
+			return vacancy;
+		}
+
+		public int getReg(){
+			return reg;
+		}
+
+		public void regTut(Student student){
+			students.add(student);
+			vacancy --;
+			reg++;
+		}
+
+		public List getStudent(){
+			return students;
+		}
+	}
+
+	public class Lab implements Serializable {
+		private String index;
+		private int vacancy;
+		private int reg;
+		private ArrayList<Student> students = new ArrayList<Student>();
+
+		public Lab(){}
+
+		public Lab(String index){
+			this.index = index;
+			vacancy =10;
+			reg =0;
+		}
+		public Lab(String index, int vacancy){
+			this.index = index;
+			this.vacancy = vacancy;
+			reg=0;
+		}
+
+		public String getIndex(){
+			return index;
+		}
+
+		public int getVacancy(){
+			return vacancy;
+		}
+
+		public int getReg(){
+			return reg;
+		}
+
+		public void regLab(Student student){
+			students.add(student);
+			vacancy --;
+			reg++;
+		}
+
+		public List getStudent(){
+			return students;
+		}
+	}
 
 	public Course(String code, String name, Boolean hasTut, Boolean hasLab, Professor coordinator, int vacancy){
 		this.code = code;

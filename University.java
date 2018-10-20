@@ -16,6 +16,7 @@ public class University{
 		this.name = name;
 	}*/
 
+
 	public static Boolean ifQuit(){
 		return isQuit;
 	}
@@ -29,6 +30,7 @@ public class University{
 			for (Student s : students){
 				System.out.printf("Student name: %s, Matric Number: %s\n", s.getName(), s.getMatric());
 		}
+		System.out.printf("\n\n\n");
 	}
 
 	public static void printCourse(){
@@ -38,6 +40,7 @@ public class University{
 					+c.getName() + " ,Number of tutorial index(s): " + c.getSizeTut() +" ,Number of lab index(s): " 
 					+ c.getSizeLab() +" , Coordiantor: " + c.getCoordinator().getName() + " , Vacancy: " + c.getVacancy());
 		}
+		System.out.printf("\n\n\n");
 	}
 
 	public static void printProfessor(){
@@ -187,8 +190,8 @@ public class University{
 			System.out.println("6.Enter course assesment components weightage");
 			System.out.println("7.Enter coursework mark - inclusize of its components");
 			System.out.println("8.Enter exam mark");
-			System.out.println("9.Print course stats");
-			System.out.println("10.Print student transcript");
+			System.out.println("9.Print course stats/Print course");
+			System.out.println("10.Print student transcript/Print student");
 			System.out.println("11.Save");
 			System.out.println("12.Save & Exit");
 			System.out.println("13.Exit without saving");
@@ -295,6 +298,12 @@ public class University{
 					} while (check !=0);
 					System.out.println("\n\n\n\n");
 					break;	
+				case 9:
+					printCourse();
+					break;
+				case 10:
+					printStudent();
+					break;
 				case 13:
 					isQuit = true;
 					System.out.println("SCARME closing ......");
