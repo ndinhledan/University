@@ -22,6 +22,10 @@ import java.io.IOException;
 		private Map<Student, String> students = new HashMap<Student, String>();
 		private static final long serialVersionUID = -3914670736074682579L;
 
+		///////////////////////////////////////////////////////////////////
+		//Nested Classes Tutorial and Lab
+		////////////////////////////////////////////////////////////////////
+
 		public class Tutorial implements Serializable{
 		private String index;
 		private int vacancy;
@@ -105,6 +109,9 @@ import java.io.IOException;
 			return students;
 		}
 	}
+	//////////////////////////////////////////////////////////////////////////////////////
+	//Constructor
+	////////////////////////////////////////////////////////////////////////////////////
 
 	public Course(String code, String name, Boolean hasTut, Boolean hasLab, Professor coordinator, int vacancy){
 		this.code = code;
@@ -113,9 +120,10 @@ import java.io.IOException;
 		this.hasLab = hasLab;
 		this.coordinator = coordinator;
 		this.vacancy = vacancy;
-		if (hasTut || hasLab){
+		if (hasTut || hasLab){ // course has tut or lab
 			while (addIndex() != 0){
 				int check = addIndex();
+				if (check ==2) System.out.println("Vacancy for course and index(es) does not match");
 				if (check ==0) break;
 			}
 		}
@@ -193,9 +201,13 @@ import java.io.IOException;
 	}
 
 	public int addStudent(Student stu){
-		if (vacancy <1 ) {
-			System.out.println(">>>>>>>>>>No vacancy left<<<<<<<<<<");
+		if (vacancy <1 ) { // no vacancy
 			return 2;
+		}
+		for (Student s : students.keySet()){ //duplicate student
+			if (s.equals(stu)){
+				return 3;
+			}
 		}
 		vacancy--;
 		students.put(stu, "Lecture");
@@ -204,7 +216,9 @@ import java.io.IOException;
 	
 	public int addStudent(Student stu, String index){
 		Tutorial ttemp = new Tutorial();
+		Boolean tflag = false; // true if tutorial found by index
 		Lab ltemp = new Lab();
+		Boolean lflag = false; // true if lab found by index
 		for (Tutorial t : tuts){
 			if(t.getIndex().equals(index)){
 				ttemp = t;
@@ -217,13 +231,16 @@ import java.io.IOException;
 				break;
 			}
 		}
-		if (ttemp == null || ltemp == null){
-			System.out.println(">>>>>>>>>>No index found<<<<<<<<<<");
+		if (!tflag || !lflag){ //either tut or lab cannot be found i.e wrong index
 			return 1;
 		}
-		if (vacancy <1 || ttemp.getVacancy() <1 || ltemp.getVacancy() <1) {
-			System.out.println(">>>>>>>>>>No vacancy left<<<<<<<<<<");
+		if (vacancy <1 || ttemp.getVacancy() <1 || ltemp.getVacancy() <1) { //no vacancy
 			return 2;
+		}
+		for (Student s : students.keySet()){ //student alread registered
+			if (s.equals(stu)){
+				return 3;
+			}
 		}
 		vacancy--;
 		ttemp.regTut(stu);
@@ -258,14 +275,18 @@ import java.io.IOException;
 	public int addIndex(){
 		Scanner sc = new Scanner(System.in);
 		try{
-			System.out.print("Enter number of index(es): ");
+			System.out.print("Enter number of index(es) for " +getCode() +": ");
 			int num = sc.nextInt();
-			if (num <1) return 1;
+			if (num <1){
+				System.out.println("Invalid Input!");
+				return 1;
+			} 
 			for (int i=0; i<num; i++){
 				System.out.print("Enter index for index number "+(i+1) + ": ");
 				String index = sc.next();
-				System.out.print("Enter vacancy: ");
+				System.out.print("Enter vacancy for "+getCode() +": ");
 				int vacancy = sc.nextInt();
+				if (vacancy *num != getVacancy()) return 2; // number of vacancy does not match
 				if (hasTut) addTut(new Tutorial(index, vacancy));
 				if (hasLab) addLab(new Lab(index, vacancy));
 			}
@@ -281,6 +302,7 @@ import java.io.IOException;
 
 	public int addWeightage(){
 		Scanner sc = new Scanner(System.in);
+		int sum =0;
 		try {
 			System.out.print("Enter exam weightage(%): ");
 			exam = sc.nextInt();
@@ -299,6 +321,13 @@ import java.io.IOException;
 		} catch(Exception e){
 			System.out.println("Error!");
 			return -1;
+		} 
+		// check if mark add up to 100%
+		for (int v : coursework.values()){
+			sum += v;
+		}
+		if (exam + sum != 100){
+			return 2;
 		}
 		return 0;
 	}

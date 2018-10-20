@@ -37,8 +37,8 @@ public class University{
 		System.out.println("      =========List of course==========");
 		for (Course c : courses){
 				System.out.println("Course code: "+c.getCode() + ", Course name: "
-					+c.getName() + " ,Number of tutorial index(s): " + c.getSizeTut() +" ,Number of lab index(s): " 
-					+ c.getSizeLab() +" , Coordiantor: " + c.getCoordinator().getName() + " , Vacancy: " + c.getVacancy());
+					+c.getName() + ", Number of tutorial index(s): " + c.getSizeTut() +", Number of lab index(s): " 
+					+ c.getSizeLab() +", Coordiantor: " + c.getCoordinator().getName() + ", Vacancy: " + c.getVacancy());
 		}
 		System.out.printf("\n\n\n");
 	}
@@ -179,6 +179,9 @@ public class University{
 
 	public static void app(String name) throws InputMismatchException{
 		Scanner sc = new Scanner(System.in);
+		String profFile = "Professor.dat";
+		String stuFile = "Student.dat";
+		String courseFile = "Course.dat";
 		int choice;
 		do {
 			System.out.printf("========Welcome to the %s University SCRAME=======\n", name);
@@ -259,19 +262,38 @@ public class University{
 						System.out.println(">>>>>>>>>>No course found<<<<<<<<<<");
 						break;
 					}
-					if (ctemp.getSizeTut() ==0 && ctemp.getSizeLab() ==0){
-						if (stemp.addCourse(ctemp) == 0){
+					if (ctemp.getSizeTut() ==0 && ctemp.getSizeLab() ==0){ // course with no tut and lab
+						check = stemp.addCourse(ctemp); //use the appropriate add course version 
+						if (check == 0){ 
 							System.out.println("Student " +
-					  stemp.getName() + " added successfully to" + ctemp.getCode());
+					  stemp.getName() + " added successfully to " + ctemp.getCode());
+						}
+						else if (check == 2){
+							System.out.println(">>>>>>>>>>No vacancy left<<<<<<<<<<");				
+						}
+						else if (check == 3){
+							System.out.println(">>>>>>>>>>Student " + stemp.getName() +
+								" already registered to " + ctemp.getCode() + " <<<<<<<<<<");
 						}
 					}
-					else {
+					else { // Enter for index
 						ctemp.printIndex();
 						System.out.print("Enter index to register: ");
 						String intmp = sc.next();
-						if (stemp.addCourse(ctemp, intmp)==0) {
+						check = stemp.addCourse(ctemp, intmp);
+						if (check == 0) {
 							System.out.println("Student " +
 							stemp.getName() + " added successfully to index " + intmp + " of " + ctemp.getCode());
+						}
+						else if (check == 1){
+							System.out.println(">>>>>>>>>>No index found<<<<<<<<<<");
+						}
+						else if (check == 2){
+							System.out.println(">>>>>>>>>>No vacancy left<<<<<<<<<<");
+						}
+						else if (check == 3){
+							System.out.println(">>>>>>>>>>Student " + stemp.getName() +
+								" already registered to " + ctemp.getCode() + " <<<<<<<<<<");
 						}
 					}
 					break;
@@ -282,7 +304,7 @@ public class University{
 						break;
 					}
 					printCourse();
-					System.out.println("Enter course code: ");						
+					System.out.print("Enter course code: ");						
 					String cwtcode = sc.next();
 					Course cwt = new Course();
 					for (Course c : courses){
@@ -295,6 +317,7 @@ public class University{
 					}
 					do {
 						check = cwt.addWeightage();
+						if (check ==2) System.out.println(">>>>>>>>>>Coursework do not add up to 100 percent<<<<<<<<<<<");
 					} while (check !=0);
 					System.out.println("\n\n\n\n");
 					break;	
@@ -304,9 +327,42 @@ public class University{
 				case 10:
 					printStudent();
 					break;
+				case 11:
+					try {
+						System.out.println("Saving data ......");
+						SerializeDB.writeSerializedObject(profFile, profs);
+						SerializeDB.writeSerializedObject(stuFile, students);
+						SerializeDB.writeSerializedObject(courseFile, courses);
+						System.out.println("Data saved successfully");
+
+					}catch(IOException e){
+						System.out.println(">>>>>>>>>>File Error<<<<<<<<<<");
+					}catch (Exception e){
+						e.printStackTrace();
+					}
+					break;
+				case 12:
+					try {
+						System.out.println("Saving data ......");
+						SerializeDB.writeSerializedObject(profFile, profs);
+						SerializeDB.writeSerializedObject(stuFile, students);
+						SerializeDB.writeSerializedObject(courseFile, courses);
+						System.out.println("Data saved successfully");
+
+					}catch(IOException e){
+						System.out.println(">>>>>>>>>>File Error<<<<<<<<<<");
+					}catch (Exception e){
+						e.printStackTrace();
+					}
+					System.out.println("\n\n\n\n");
+					isQuit = true;
+					System.out.println("SCRAME closing ......");
+					System.out.println("\n\n\n\n");
+					break;
+			
 				case 13:
 					isQuit = true;
-					System.out.println("SCARME closing ......");
+					System.out.println("SCRAME closing ......");
 					System.out.println("\n\n\n\n");
 					break;
 			}
@@ -314,11 +370,11 @@ public class University{
 	}
 
 	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);		
 		String profFile = "Professor.dat";
 		String stuFile = "Student.dat";
 		String courseFile = "Course.dat";
-		Scanner sc = new Scanner(System.in);
-		try {
+		try { // reading in data from files
 			System.out.println("Reading data......");
 			profs = (ArrayList<Professor>) SerializeDB.readSerializedObject(profFile);
 			students = (ArrayList<Student>) SerializeDB.readSerializedObject(stuFile);
@@ -333,7 +389,6 @@ public class University{
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-
 		while (!University.ifQuit()){
 			try{
 				University.app("NTU");

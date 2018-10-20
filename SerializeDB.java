@@ -73,9 +73,9 @@ public class SerializeDB
 
 				SerializeDB.writeSerializedObject("Course.dat", list);
 
-		}  catch ( Exception e ) {
+		}  catch (Exception e) {
 				e.printStackTrace();
-				System.out.println( "Exception >> " + e.getMessage() );
+				System.out.println(e.getMessage());
 		}
 	}
 } 
