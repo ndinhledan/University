@@ -15,11 +15,11 @@ import java.io.IOException;
 		private boolean hasLab;
 		private Professor coordinator;
 		private int exam;
-		private Map<String, Integer> coursework = new HashMap<String, Integer>();
+		private Map<String, Integer> coursework = new HashMap<String, Integer>();//component map to weightage
 		private int vacancy;;
 		private ArrayList<Tutorial> tuts = new ArrayList<Tutorial>();
 		private ArrayList<Lab> labs = new ArrayList<Lab>();
-		private Map<Student, String> students = new HashMap<Student, String>();
+		private Map<Student, String> students = new HashMap<Student, String>(); //student map to index
 		private static final long serialVersionUID = -3914670736074682579L;
 
 		///////////////////////////////////////////////////////////////////
@@ -31,6 +31,7 @@ import java.io.IOException;
 		private int vacancy;
 		private int reg;
 		private ArrayList<Student> students = new ArrayList<Student>();
+		private static final long serialVersionUID = -1912256906115544712L;
 
 		public Tutorial(){}
 
@@ -66,6 +67,13 @@ import java.io.IOException;
 		public List getStudent(){
 			return students;
 		}
+
+		public void printStudent(){
+			System.out.println("    ===========List of students of index " + index +" ===========");
+			for (Student s : students){
+				System.out.println("Student: " + s.getName() + ", Matric: " + s.getMatric());
+			}
+		}
 	}
 
 	public class Lab implements Serializable {
@@ -73,6 +81,7 @@ import java.io.IOException;
 		private int vacancy;
 		private int reg;
 		private ArrayList<Student> students = new ArrayList<Student>();
+		private static final long serialVersionUID = -1497047205835041867L;
 
 		public Lab(){}
 
@@ -107,6 +116,13 @@ import java.io.IOException;
 
 		public List getStudent(){
 			return students;
+		}
+
+		public void printStudent(){
+			System.out.println("    ===========List of students of index " + index +" ===========");
+			for (Student s : students){
+				System.out.println("Student: " + s.getName() + ", Matric: " + s.getMatric());
+			}
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -222,23 +238,28 @@ import java.io.IOException;
 		for (Tutorial t : tuts){
 			if(t.getIndex().equals(index)){
 				ttemp = t;
+				tflag = true;
 				break;
 			}
 		}
 		for (Lab l : labs){
 			if(l.getIndex().equals(index)){
 				ltemp = l;
+				lflag = true;
 				break;
 			}
 		}
-		if (!tflag || !lflag){ //either tut or lab cannot be found i.e wrong index
+		if (!tflag && !lflag){ //either tut or lab cannot be found i.e wrong index
+			System.out.println("return 1");
 			return 1;
 		}
-		if (vacancy <1 || ttemp.getVacancy() <1 || ltemp.getVacancy() <1) { //no vacancy
+		if (vacancy <1 || (ttemp.getVacancy() <1 && ltemp.getVacancy() <1)) { //no vacancy
+			System.out.println("return 2");
 			return 2;
 		}
 		for (Student s : students.keySet()){ //student alread registered
 			if (s.equals(stu)){
+				System.out.println("return 3");
 				return 3;
 			}
 		}
@@ -267,9 +288,39 @@ import java.io.IOException;
 		}
 	}
 
-	public void printIndex(){
+	public void printStudentIndex(String index){
+		Tutorial ttemp = new Tutorial();
+		Boolean tflag = false; // true if tutorial found by index
+		Lab ltemp = new Lab();
+		Boolean lflag = false; // true if lab found by index
 		for (Tutorial t : tuts){
-			System.out.printf("Index: %s, Vacancy: %d\n", t.getIndex(), t.getVacancy());
+			if(t.getIndex().equals(index)){
+				ttemp = t;
+				break;
+			}
+		}
+		for (Lab l : labs){
+			if(l.getIndex().equals(index)){
+				ltemp = l;
+				break;
+			}
+		}
+		if (!tflag || !lflag){ //neither tut or lab cannot be found i.e wrong index
+			System.out.println(">>>>>>>>>>No index found<<<<<<<<<<");
+			return;
+		}
+		else {
+			ttemp.printStudent();
+		}	
+	}
+
+	public void printIndex(){
+		if (!hasTut && !hasLab) return;
+		for (Tutorial t : tuts){
+			System.out.printf("Index: %s, Vacancy: %d for ", t.getIndex(), t.getVacancy());
+			if (hasTut) System.out.print("Tutorial");
+			if (hasLab) System.out.print(" and Lab");
+			System.out.println(".");
 		}
 	}
 	public int addIndex(){

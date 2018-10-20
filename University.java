@@ -255,14 +255,16 @@ public class University{
 					Course ctemp = new Course();
 					Boolean cflag = false;
 					for (Course c : courses){
-						if (c.getCode().equals(code)) ctemp = c;
-						cflag = true;
+						if (c.getCode().equals(code)) {
+							ctemp = c;
+							cflag = true;
+						}	
 					} 
 					if (!cflag){
 						System.out.println(">>>>>>>>>>No course found<<<<<<<<<<");
 						break;
 					}
-					if (ctemp.getSizeTut() ==0 && ctemp.getSizeLab() ==0){ // course with no tut and lab
+					if (!ctemp.includeTut() && !ctemp.includeLab()){ // course with no tut and lab
 						check = stemp.addCourse(ctemp); //use the appropriate add course version 
 						if (check == 0){ 
 							System.out.println("Student " +
@@ -297,6 +299,90 @@ public class University{
 						}
 					}
 					break;
+				case 4:
+					System.out.println("\n\n");
+					System.out.println("==========================================");
+					if (courses.size() == 0) {
+						System.out.println(">>>>>>>>>>No courses<<<<<<<<<<");
+						System.out.println("\n\n\n\n");
+						break;
+					}
+					System.out.print("Enter course code: ");						
+					String cwtcode = sc.next();
+					Course cwt = new Course();
+					cflag = false;
+					for (Course c : courses){
+						if (c.getCode().equals(cwtcode)){
+							cwt = c;
+							cflag = true;
+							break;
+						}
+					} 
+					if (!cflag){
+						System.out.println(">>>>>>>>>>No course found<<<<<<<<<<");
+						System.out.println("\n\n\n\n");
+						break;
+					}
+					System.out.println("Course " + cwt.getCode() +" have " + cwt.getVacancy() + " free slots!");
+					cwt.printIndex();
+					System.out.println("\n\n\n\n");
+					break;
+				case 5:
+					int pchoice =0;
+					System.out.println("\n\n");
+					System.out.println("==========================================");
+					if (courses.size() == 0) {
+						System.out.println(">>>>>>>>>>No courses<<<<<<<<<<");
+						System.out.println("\n\n\n\n");
+						break;
+					}
+					System.out.print("Enter course code: ");						
+					cwtcode = sc.next();
+					cwt = new Course();
+					cflag = false;
+					for (Course c : courses){
+						if (c.getCode().equals(cwtcode)){
+							cwt = c;
+							cflag = true;
+							break;
+						}
+					} 
+					if (!cflag){
+						System.out.println(">>>>>>>>>>No course found<<<<<<<<<<");
+						System.out.println("\n\n\n\n");
+						break;
+					}
+					if (!cwt.includeTut() && !cwt.includeLab()){
+						cwt.printStudent();
+					}
+					try {
+						System.out.println("1.Print students by lecture");
+						System.out.println("2.Print students by tutorial/lab");
+						System.out.print("Enter choice: ");
+						pchoice = sc.nextInt();
+					} catch(InputMismatchException e){
+						System.out.println(">>>>>>>>>>Invalid Input!<<<<<<<<<");
+						break;
+					} catch(Exception e){
+						System.out.println(">>>>>>>>>>Error!<<<<<<<<<<");
+						break;
+					}
+					switch (pchoice){
+						case 1:
+							cwt.printStudent();
+							break;
+						case 2:
+							cwt.printIndex();
+							System.out.println("Enter index to print students: ");
+							String indextmp = sc.next();
+							cwt.printStudentIndex(indextmp);
+							break;
+						default:
+						System.out.println(">>>>>>>>>>Invalid choice!<<<<<<<<<<");
+						break;
+					}
+					System.out.println("\n\n\n");
+					break;
 				case 6:
 					if (courses.size() == 0) {
 						System.out.println(">>>>>>>>>>No courses<<<<<<<<<<");
@@ -305,12 +391,17 @@ public class University{
 					}
 					printCourse();
 					System.out.print("Enter course code: ");						
-					String cwtcode = sc.next();
-					Course cwt = new Course();
+					cwtcode = sc.next();
+					cwt = new Course();
+					cflag = false;
 					for (Course c : courses){
-						if (c.getCode().equals(cwtcode)) cwt = c;
+						if (c.getCode().equals(cwtcode)){
+							cwt = c;
+							cflag = true;
+							break;
+						}
 					} 
-					if (cwt == null){
+					if (!cflag){
 						System.out.println(">>>>>>>>>>No course found<<<<<<<<<<");
 						System.out.println("\n\n\n\n");
 						break;
@@ -319,8 +410,13 @@ public class University{
 						check = cwt.addWeightage();
 						if (check ==2) System.out.println(">>>>>>>>>>Coursework do not add up to 100 percent<<<<<<<<<<<");
 					} while (check !=0);
+					System.out.println("Course assesment components weightage added successfully!");
 					System.out.println("\n\n\n\n");
 					break;	
+				case 7:
+					break;
+				case 8:
+					break;
 				case 9:
 					printCourse();
 					break;
@@ -364,6 +460,8 @@ public class University{
 					isQuit = true;
 					System.out.println("SCRAME closing ......");
 					System.out.println("\n\n\n\n");
+					break;
+				default:
 					break;
 			}
 		} while(choice <12 && choice >0);

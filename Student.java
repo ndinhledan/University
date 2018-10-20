@@ -28,22 +28,24 @@ public class Student implements Serializable{
 	}
 
 	public int addCourse(Course course){
-		if (course.addStudent(this) == 0){
+		int check =0;
+		check = course.addStudent(this); 
+		if (check == 0){
 			courses.add(course);
 			return 0;
 		}
-		else {
-			return 1;
-		}
+		else return check;
 	}
 
 	public int addCourse(Course course, String index){
-		if (course.addStudent(this, index) ==0){
+		int check =0;
+		check = course.addStudent(this, index);
+		if (check == 0){
 			courses.add(course);
 			return 0;
 		}
 		else {
-			return 1;
+			return check;
 		}
 	}
 
