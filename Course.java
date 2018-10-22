@@ -14,9 +14,9 @@ import java.io.IOException;
 		private boolean hasTut;
 		private boolean hasLab;
 		private Professor coordinator;
-		private int exam;
-		private Map<String, Integer> coursework = new HashMap<String, Integer>();//{component: weightage}
-		private int vacancy;;
+		private int exam; //exam weightage
+		private Map<String, Integer> coursework = new HashMap<String, Integer>();//{component: weightage} coursework weightage
+		private int vacancy;
 		private ArrayList<Tutorial> tuts = new ArrayList<Tutorial>();
 		private ArrayList<Lab> labs = new ArrayList<Lab>();
 		private Map<Student, String> students = new HashMap<Student, String>(); //{Student: Index}, index "Lecture" = no tut/lab
@@ -342,9 +342,13 @@ import java.io.IOException;
 	}
 
 	public void printStats(){
+		if (students.size() == 0){
+			System.out.println(">>>>>>>>>>No student registered for this course yet!<<<<<<<<<<");
+			return;
+		}
 		System.out.println("       ====================Course Statistics========================");
 		for (Student s : students.keySet()){
-			System.out.println("Student name: " + s.getName() + ", Mark for this course: " + s.getMark(this) + "/100");
+			System.out.println("Student name: " + s.getName() + ", Mark for this course: " + s.getMark(this)/20 + "/5");
 		}
 	}
 
@@ -360,7 +364,7 @@ import java.io.IOException;
 			for (int i=0; i<num; i++){
 				System.out.print("Enter index for index number "+(i+1) + ": ");
 				String index = sc.next();
-				System.out.print("Enter vacancy for "+getCode() +": ");
+				System.out.print("Enter vacancy for "+index +": ");
 				int vacancy = sc.nextInt();
 				if (vacancy *num != getVacancy()) return 2; // number of vacancy does not match
 				if (hasTut) addTut(new Tutorial(index, vacancy));

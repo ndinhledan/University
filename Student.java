@@ -65,6 +65,7 @@ public class Student implements Serializable{
 		if (cflag == false){ //student does not registered this course
 			return 2;
 		}
+		
 		if (examGrade.size() >0){
 			for (Course c : examGrade.keySet()){//course already added exam grade
 				if (c.equals(course)){
@@ -132,7 +133,7 @@ public class Student implements Serializable{
 		double result =0;
 
 		for (Course c : courses){//check if student registered for this course or not            
-			if (c.equals(course)){
+			if (course.equals(c)){
 				cflag = true;
 				break;
 			}
@@ -141,6 +142,7 @@ public class Student implements Serializable{
 			System.out.println(">>>>>>>>>>>>Student " + getName() + " does not register for this course<<<<<<<<<<<");
 			return 0;
 		}
+
 		for (Course c : examGrade.keySet()){ //Checking if exam grade has been added
 			if (c.equals(course)){	//course already added exam grade
 				ccflag =true;
@@ -152,14 +154,13 @@ public class Student implements Serializable{
 			return 0;
 		}
 		//Calculating exam grade
-		int egrade = examGrade.get(course);
-		int exam = course.getExamWeightage();
+		Integer egrade = examGrade.get(course);
+		Integer exam = course.getExamWeightage();
 		if (exam == 0){ //course assesment has not been added yet
 			System.out.println(">>>>>>>>>>>>Course assesment weightage for this courses has not been added<<<<<<<<<<");
 			return 0;
 		}
-		result += (egrade/100)*exam;
-
+		result += (egrade*exam) /100;
 		for (Course c : courseworkGrade.keySet()){ //Checking if coursework grade has been added
 			if (c.equals(course)){	//course already added coursework grade
 				cccflag =true;
@@ -178,11 +179,22 @@ public class Student implements Serializable{
 			while (itw.hasNext()){
 				Map.Entry pair = (Map.Entry) itw.next();
 				String component = (String) pair.getKey();
-				int cgrade = courseworkg.get(component);
-				int w = (int) pair.getValue();
-				result += (cgrade/100) *w;
+				Integer cgrade = courseworkg.get(component);
+				Integer w = (Integer) pair.getValue();
+				result += (cgrade*w)/100;
 			}
 		return result;
+	}
+
+	public void printTranscript(){
+		if (courses.size() == 0){
+			System.out.println(">>>>>>>>>>Student has not registered for any course<<<<<<<<<<");
+			return;
+		}
+		System.out.println("        ======================Student Transcript===================");
+		for (Course c : courses){
+			System.out.println("Course: " + c.getCode() + ", Mark: " + getMark(c)/20);
+		}
 	}
 
 	public boolean equals(Object o){

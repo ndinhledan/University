@@ -48,8 +48,10 @@ public class SerializeDB
 	public static void main(String[] args) {
 		List list;
 		List list1;
+		List list2;
 		try	{
-				list = new ArrayList<Student>();
+				list = new ArrayList<Course>();
+				list2 = new ArrayList<Student>();
 				// read from serialized file the list of professors
 				list1 = (ArrayList)SerializeDB.readSerializedObject("Professor.dat");
 				//for (int i = 0 ; i < list.size() ; i++) {
@@ -66,13 +68,25 @@ public class SerializeDB
 				Course c1 = new Course("CZ2002", "OOP", false, false, p1, 20);
 				Course c2 = new Course("CZ2004", "HCI", true, false, p2, 20);
 				Course c3 = new Course("CZ2005","OS", true, true, p3, 20);
+
+				Student s1 = new Student("Danny", "U1720241A");
+				Student s2 = new Student("Le Dan", "G1728185U");
+				Student s3 = new Student("DanDanDan", "86713293");
+				
+				//public Course(String code, String name, Boolean hasTut, Boolean hasLab, Professor coordinator, int vacancy){
 				// add to list
 				list.add(c1);
 				list.add(c2);
 				list.add(c3);
+				list2.add(s1);
+				list2.add(s2);
+				list2.add(s2);
+				
 				// list.remove(p);  // remove if p equals object in the list
 
 				SerializeDB.writeSerializedObject("Course.dat", list);
+				SerializeDB.writeSerializedObject("Student.dat", list2);
+
 
 		}  catch (Exception e) {
 				e.printStackTrace();
