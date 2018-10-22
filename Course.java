@@ -15,11 +15,11 @@ import java.io.IOException;
 		private boolean hasLab;
 		private Professor coordinator;
 		private int exam;
-		private Map<String, Integer> coursework = new HashMap<String, Integer>();//component map to weightage
+		private Map<String, Integer> coursework = new HashMap<String, Integer>();//{component: weightage}
 		private int vacancy;;
 		private ArrayList<Tutorial> tuts = new ArrayList<Tutorial>();
 		private ArrayList<Lab> labs = new ArrayList<Lab>();
-		private Map<Student, String> students = new HashMap<Student, String>(); //student map to index
+		private Map<Student, String> students = new HashMap<Student, String>(); //{Student: Index}, index "Lecture" = no tut/lab
 		private static final long serialVersionUID = -3914670736074682579L;
 
 		///////////////////////////////////////////////////////////////////
@@ -146,6 +146,11 @@ import java.io.IOException;
 	}
 
 	public Course(){};
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	//Methods
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 	public String getCode(){
 		return code;
@@ -280,11 +285,20 @@ import java.io.IOException;
 	}
 
 	public void printStudent(){
-		Iterator it = students.entrySet().iterator();
-		while (it.hasNext()){
-			Map.Entry pair = (Map.Entry) it.next();
-			Student tmp = (Student) pair.getKey();
-			System.out.println("Student name: " + tmp.getName() + ", Index: " + pair.getValue());
+		System.out.println("=========================================================");
+		if (!includeTut() && !includeLab()){
+			for (Student s : students.keySet()){
+				System.out.println("Student name: " + s.getName() +", Matric: " + s.getMatric());
+			}
+		}
+		else {
+			Iterator it = students.entrySet().iterator();
+			while (it.hasNext()){
+				Map.Entry pair = (Map.Entry) it.next();
+				Student tmp = (Student) pair.getKey();
+				System.out.println("Student name: " + tmp.getName() +", Matric: " + tmp.getMatric()
+				 + ", Index: " + pair.getValue());
+			}
 		}
 	}
 
@@ -296,20 +310,23 @@ import java.io.IOException;
 		for (Tutorial t : tuts){
 			if(t.getIndex().equals(index)){
 				ttemp = t;
+				tflag = true;
 				break;
 			}
 		}
 		for (Lab l : labs){
 			if(l.getIndex().equals(index)){
 				ltemp = l;
+				lflag = true;
 				break;
 			}
 		}
-		if (!tflag || !lflag){ //neither tut or lab cannot be found i.e wrong index
+		if (!tflag && !lflag){ //neither tut or lab cannot be found i.e wrong index
 			System.out.println(">>>>>>>>>>No index found<<<<<<<<<<");
 			return;
 		}
 		else {
+			System.out.println("=========================================================");
 			ttemp.printStudent();
 		}	
 	}
@@ -323,6 +340,14 @@ import java.io.IOException;
 			System.out.println(".");
 		}
 	}
+
+	public void printStats(){
+		System.out.println("       ====================Course Statistics========================");
+		for (Student s : students.keySet()){
+			System.out.println("Student name: " + s.getName() + ", Mark for this course: " + s.getMark(this) + "/100");
+		}
+	}
+
 	public int addIndex(){
 		Scanner sc = new Scanner(System.in);
 		try{

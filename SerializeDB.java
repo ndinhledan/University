@@ -62,9 +62,10 @@ public class SerializeDB
 				Professor p3 = (Professor) list1.get(2);
 				// write to serialized file - update/insert/delete
 				// example - add one more professor
-				Course c1 = new Course("CZ2002", "OOP", false, false, p1, 10);
-				Course c2 = new Course("CZ2004", "HCI", true, false, p2, 10);
-				Course c3 = new Course("CZ2005","OS", true, true, p3, 10);
+				//public Course(String code, String name, Boolean hasTut, Boolean hasLab, Professor coordinator, int vacancy)
+				Course c1 = new Course("CZ2002", "OOP", false, false, p1, 20);
+				Course c2 = new Course("CZ2004", "HCI", true, false, p2, 20);
+				Course c3 = new Course("CZ2005","OS", true, true, p3, 20);
 				// add to list
 				list.add(c1);
 				list.add(c2);
