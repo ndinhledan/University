@@ -43,6 +43,17 @@ public class University{
 		System.out.printf("\n\n\n");
 	}
 
+	public static void printCourse(Student student){
+		System.out.println("      =========List of course==========");
+		for (Course c : student.getCourse()){
+				System.out.println("Course code: "+c.getCode() + ", Course name: "
+					+c.getName() + ", Number of tutorial index(s): " + c.getSizeTut() +", Number of lab index(s): " 
+					+ c.getSizeLab() +", Coordiantor: " + c.getCoordinator().getName() + ", Vacancy: " + c.getVacancy());
+		}
+		System.out.printf("\n\n\n");
+
+	}
+
 	public static void printProfessor(){
 		System.out.println("          ==========Professors=========");
 		for (Professor p : profs){
@@ -135,12 +146,15 @@ public class University{
 			if (!pflag) System.out.println(">>>>>>>>>>No match found!<<<<<<<<<<");
 		} while (!pflag);
 		do {
-			try {
+			try { // vacancy negative number
 				System.out.print("Enter vacancy for the course: ");
 				vacancy = sc.nextInt();
-				sc.nextLine();
+				if (vacancy < 1){
+					throw new InputMismatchException("Negative vacancy");
+				}
 				vflag = true;
 			} catch(InputMismatchException e){
+				sc.nextLine();
 				System.out.println(">>>>>>>>>>Invalid Input!<<<<<<<<<<");
 			} catch (Exception e){
 				e.printStackTrace();
@@ -161,6 +175,9 @@ public class University{
 		try{
 			System.out.print("Enter student matric: ");
 			smatric = sc.nextLine();
+			if (smatric.length() !=9){
+				return 2;//invalid matric
+			}
 			System.out.print("Enter student name: ");
 			sname = sc.nextLine();
 		} catch(Exception e){
@@ -214,6 +231,9 @@ public class University{
 					}
 					else if (check1 ==0){
 						System.out.println(">>>>>>>Add student successfully!<<<<<<<<<");
+					}
+					else if (check1 ==2){
+						System.out.println(">>>>>>>>>>Invalid Matric!<<<<<<<<<<");
 					}
 					printStudent();
 					System.out.println("\n\n\n\n");
@@ -438,7 +458,7 @@ public class University{
 						break;
 					}
 					System.out.println("Student " + stemp7.getName() + "\n");
-					printCourse();
+					printCourse(stemp7);
 					System.out.print("Enter course code: ");						
 					String code7 = sc.next();
 					Course ctemp7 = new Course();
@@ -500,7 +520,7 @@ public class University{
 						break;
 					}
 					System.out.println("Student " + stemp8.getName() + "\n");
-					printCourse();
+					printCourse(stemp8);
 					System.out.print("Enter course code: ");						
 					String code8 = sc.next();
 					Course ctemp8 = new Course();

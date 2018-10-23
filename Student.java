@@ -52,6 +52,10 @@ public class Student implements Serializable{
 		}
 	}
 
+	public ArrayList<Course> getCourse(){
+		return courses;
+	}
+
 	public int addExamMark(Course course){
 		Scanner sc = new Scanner(System.in);
 		Boolean cflag = false;
@@ -76,6 +80,9 @@ public class Student implements Serializable{
 		try {
 			System.out.print("Enter exam mark for " + course.getCode() + " /100: ");
 			grade = sc.nextInt();
+			if (grade < 1){
+				throw new InputMismatchException();
+			}
 		}catch(InputMismatchException e){
 			return 1;
 		}catch(Exception e){
@@ -113,6 +120,9 @@ public class Student implements Serializable{
 			try {
 				System.out.printf("Enter mark for %s/100: ", c);
 				int mark = sc.nextInt();
+				if (mark < 1){
+					throw new InputMismatchException();
+				}
 				cw.put(c, mark);
 			} catch(InputMismatchException e){
 				return 1; //invalid input
@@ -124,7 +134,7 @@ public class Student implements Serializable{
 		}
 		return 0;
 	}
-
+ 
 	public double getMark(Course course){
 		Boolean cflag = false;//flag for course
 		Boolean ccflag = false;//flag fpr exam grade
@@ -191,9 +201,20 @@ public class Student implements Serializable{
 			System.out.println(">>>>>>>>>>Student has not registered for any course<<<<<<<<<<");
 			return;
 		}
+		if (examGrade.size() == 0 || courseworkGrade.size() == 0){
+			System.out.println(">>>>>>>>>>Mark for this student has not been added<<<<<<<<<<");
+			return;
+		}
 		System.out.println("        ======================Student Transcript===================");
 		for (Course c : courses){
-			System.out.println("Course: " + c.getCode() + ", Mark: " + getMark(c)/20);
+			System.out.print("Course: " + c.getCode() + ", Mark: " + getMark(c)/20 + ", Exam: " + examGrade.get(c));
+			Map <String, Integer> cwg = courseworkGrade.get(c);
+			Iterator it = cwg.entrySet().iterator();
+			while (it.hasNext()){
+				Map.Entry pair = (Map.Entry) it.next();
+				System.out.print(", " + pair.getKey() + ": " + pair.getValue());
+			}
+			System.out.println();
 		}
 	}
 

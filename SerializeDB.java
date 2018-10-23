@@ -80,7 +80,7 @@ public class SerializeDB
 				list.add(c3);
 				list2.add(s1);
 				list2.add(s2);
-				list2.add(s2);
+				list2.add(s3);
 				
 				// list.remove(p);  // remove if p equals object in the list
 

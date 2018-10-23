@@ -137,10 +137,11 @@ import java.io.IOException;
 		this.coordinator = coordinator;
 		this.vacancy = vacancy;
 		if (hasTut || hasLab){ // course has tut or lab
-			while (addIndex() != 0){
-				int check = addIndex();
-				if (check ==2) System.out.println("Vacancy for course and index(es) does not match");
-				if (check ==0) break;
+			int check = addIndex();
+			while (check != 0){
+				if (check == 2) System.out.println("Vacancy for course and index(es) does not match");
+				if (check == 0) break;
+				check = addIndex();
 			}
 		}
 	}
@@ -255,16 +256,13 @@ import java.io.IOException;
 			}
 		}
 		if (!tflag && !lflag){ //either tut or lab cannot be found i.e wrong index
-			System.out.println("return 1");
 			return 1;
 		}
 		if (vacancy <1 || (ttemp.getVacancy() <1 && ltemp.getVacancy() <1)) { //no vacancy
-			System.out.println("return 2");
 			return 2;
 		}
 		for (Student s : students.keySet()){ //student alread registered
 			if (s.equals(stu)){
-				System.out.println("return 3");
 				return 3;
 			}
 		}
@@ -361,16 +359,20 @@ import java.io.IOException;
 				System.out.println("Invalid Input!");
 				return 1;
 			} 
+			System.out.print("Enter vacancy for each index (each index has equal vacancy): ");
+			int vacancy = sc.nextInt();
+			if (vacancy < 1){
+				throw new InputMismatchException("Negative Vacancy");
+			}
+			if (vacancy *num != getVacancy()) return 2; // number of vacancy does not match		
 			for (int i=0; i<num; i++){
 				System.out.print("Enter index for index number "+(i+1) + ": ");
 				String index = sc.next();
-				System.out.print("Enter vacancy for "+index +": ");
-				int vacancy = sc.nextInt();
-				if (vacancy *num != getVacancy()) return 2; // number of vacancy does not match
 				if (hasTut) addTut(new Tutorial(index, vacancy));
 				if (hasLab) addLab(new Lab(index, vacancy));
 			}
 		} catch(InputMismatchException e){
+			sc.nextLine();
 			System.out.println("Invalid Input!");
 			return 1;
 		} catch(Exception e){
@@ -388,11 +390,17 @@ import java.io.IOException;
 			exam = sc.nextInt();
 			System.out.print("Enter number of component in coursework: ");
 			int compo = sc.nextInt();
+			if (compo < 1){
+				throw new InputMismatchException();
+			}
 			for (int i =0; i<compo; i++){
 				System.out.print("Enter component name: ");
 				String component = sc.next();
 				System.out.print("Enter component weightage(%): ");
 				int weight = sc.nextInt();
+				if (weight < 1){
+					throw new InputMismatchException();
+				}
 				coursework.put(component, weight);
 			}
 		} catch(InputMismatchException e){
