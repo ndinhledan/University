@@ -80,7 +80,7 @@ public class Student implements Serializable{
 		try {
 			System.out.print("Enter exam mark for " + course.getCode() + " /100: ");
 			grade = sc.nextInt();
-			if (grade < 1){
+			if (grade < 1 || grade > 100){
 				throw new InputMismatchException();
 			}
 		}catch(InputMismatchException e){

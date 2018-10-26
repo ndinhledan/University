@@ -68,8 +68,13 @@ public class University{
 		try{
 			System.out.print("Enter course code: ");
 			ccode = sc.next();
+			for (Course c : courses){
+				if (c.getCode().equals(ccode)){
+					return 1; //course exist already
+				}
+			}
 			System.out.print("Enter course name: ");
-			cname = sc.next();
+			cname = sc.nextLine();
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -161,9 +166,6 @@ public class University{
 			}
 		} while (!vflag);
 		Course cour = new Course(ccode, cname, tut, lab, prof, vacancy);
-		for (Course c:courses){
-			if (c.equals(cour)) return 1;
-		}
 		courses.add(cour);
 		return 0;
 	}
@@ -178,6 +180,11 @@ public class University{
 			if (smatric.length() !=9){
 				return 2;//invalid matric
 			}
+			if (students != null){
+				for (Student s : students){
+					if (s.getMatric().equals(smatric)) return 1;
+				}
+			}
 			System.out.print("Enter student name: ");
 			sname = sc.nextLine();
 		} catch(Exception e){
@@ -185,11 +192,6 @@ public class University{
 			return -1;
 		}
 		Student stu = new Student(sname, smatric);
-		if (students != null){
-			for (Student s:students){
-				if (s.equals(stu)) return 1;
-			}
-		}
 		students.add(stu);
 		return 0;
 	}
@@ -398,7 +400,7 @@ public class University{
 							ctemp5.printIndex();
 							System.out.print("Enter index to print students: ");
 							String indextmp5 = sc.next();
-							ctemp5.printStudentIndex(indextmp5);
+							ctemp5.printStudent(indextmp5);
 							break;
 						default:
 						System.out.println(">>>>>>>>>>Invalid choice!<<<<<<<<<<");
@@ -432,9 +434,11 @@ public class University{
 					}
 					do {
 						check6 = ctemp6.addWeightage();
-						if (check6 ==2) System.out.println(">>>>>>>>>>Coursework do not add up to 100 percent<<<<<<<<<<<");
-					} while (check6 !=0);
-					System.out.println(">>>>>>>>>>Course assesment components weightage added successfully!<<<<<<<<<<");
+						if (check6 == 2) System.out.println(">>>>>>>>>>Coursework do not add up to 100 percent<<<<<<<<<<<");
+					} while (check6 !=0 && check6 != 3);
+					if (check6 == 0) System.out.println(">>>>>>>>>>Course assesment components weightage added successfully!<<<<<<<<<<");
+					if (check6 == 3) System.out.println(">>>>>>>>>>Coursework weightage for "+ code6 +" has been added already<<<<<<<<<<");
+						
 					System.out.println("\n\n\n\n");
 					break;	
 				case 7:

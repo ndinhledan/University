@@ -284,6 +284,10 @@ import java.io.IOException;
 
 	public void printStudent(){
 		System.out.println("=========================================================");
+		if (students.size() == 0){
+			System.out.println(">>>>>>>>>>No student has registered for this course yet!<<<<<<<<<<");
+			return;
+		}
 		if (!includeTut() && !includeLab()){
 			for (Student s : students.keySet()){
 				System.out.println("Student name: " + s.getName() +", Matric: " + s.getMatric());
@@ -300,7 +304,12 @@ import java.io.IOException;
 		}
 	}
 
-	public void printStudentIndex(String index){
+	public void printStudent(String index){
+		System.out.println("=========================================================");
+		if (students.size() == 0){
+			System.out.println(">>>>>>>>>>No student has registered for this course yet!<<<<<<<<<<");
+			return;
+		}
 		Tutorial ttemp = new Tutorial();
 		Boolean tflag = false; // true if tutorial found by index
 		Lab ltemp = new Lab();
@@ -385,6 +394,9 @@ import java.io.IOException;
 	public int addWeightage(){
 		Scanner sc = new Scanner(System.in);
 		int sum =0;
+		if (coursework.size() > 0){ //coursework weightage already added
+			return 3;
+		}
 		try {
 			System.out.print("Enter exam weightage(%): ");
 			exam = sc.nextInt();
@@ -398,7 +410,7 @@ import java.io.IOException;
 				String component = sc.next();
 				System.out.print("Enter component weightage(%): ");
 				int weight = sc.nextInt();
-				if (weight < 1){
+				if (weight < 1 || weight > 100){
 					throw new InputMismatchException();
 				}
 				coursework.put(component, weight);
@@ -414,6 +426,7 @@ import java.io.IOException;
 		for (int v : coursework.values()){
 			sum += v;
 		}
+
 		if (exam + sum != 100){
 			return 2;
 		}
