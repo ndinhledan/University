@@ -30,8 +30,22 @@ public class Student implements Serializable{
 		return matric;
 	}
 
+	/*
+		*
+		*method for registering this student to a course without tut and lab
+		*add course to courses arraylist
+		*@param course: course to which this student is registering to
+		*
+	*/
+
 	public int addCourse(Course course){
 		int check =0;
+		/*
+			*
+			*calling add student of course
+			*add course to student and add student to course
+			*
+		*/
 		check = course.addStudent(this); 
 		if (check == 0){
 			courses.add(course);
@@ -40,8 +54,23 @@ public class Student implements Serializable{
 		else return check;
 	}
 
+	/*
+		*
+		*method for registering this student to a course with tut and lab
+		*add course to courses arraylist
+		*@param course: course to which this student is registering
+		*@param index: index to which this student is registering
+		*
+	*/
+
 	public int addCourse(Course course, String index){
 		int check =0;
+		/*
+			*
+			*calling addstudent of this course
+			*add this student to the course and add course to this student
+			*
+		*/
 		check = course.addStudent(this, index);
 		if (check == 0){
 			courses.add(course);
@@ -56,6 +85,11 @@ public class Student implements Serializable{
 		return courses;
 	}
 
+	/*
+		*
+		*method for adding exam mark to this student
+		*
+	*/
 	public int addExamMark(Course course){
 		Scanner sc = new Scanner(System.in);
 		Boolean cflag = false;
@@ -92,6 +126,12 @@ public class Student implements Serializable{
 		examGrade.put(course, grade);
 		return 0;
 	}
+
+	/*
+		*
+		*method for adding coursework mark to this student
+		*
+	*/
 
 	public int addCourseworkMark(Course course){
 		Boolean cflag = false;
@@ -184,7 +224,7 @@ public class Student implements Serializable{
 
 		//Calculating coursework grade
 		Map <String, Integer> courseworkw = course.getCourseworkWeightage(); //getting weightage for coursework from course
-		Map <String, Integer> courseworkg = courseworkGrade.get(course);
+		Map <String, Integer> courseworkg = courseworkGrade.get(course);//getting grade of course of this student
 		Iterator itw = courseworkw.entrySet().iterator();
 			while (itw.hasNext()){
 				Map.Entry pair = (Map.Entry) itw.next();
@@ -195,6 +235,13 @@ public class Student implements Serializable{
 			}
 		return result;
 	}
+
+	/*
+		*
+		*printing transcript of this student
+		*include overall mark, exam mark and all coursework mark of all registered courses
+		*
+	*/
 
 	public void printTranscript(){
 		if (courses.size() == 0){

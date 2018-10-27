@@ -10,15 +10,15 @@ import java.io.IOException;
 
 	public class Course implements Serializable{
 		private String code; //course code e.g CZ2002
-		private String name;
-		private boolean hasTut;
-		private boolean hasLab;
+		private String name; //course name
+		private boolean hasTut;//indicate whether course has tut
+		private boolean hasLab;//indicate whether course has lab
 		private Professor coordinator;
 		private int exam; //exam weightage
 		private Map<String, Integer> coursework = new HashMap<String, Integer>();//{component: weightage} coursework weightage
 		private int vacancy;
-		private ArrayList<Tutorial> tuts = new ArrayList<Tutorial>();
-		private ArrayList<Lab> labs = new ArrayList<Lab>();
+		private ArrayList<Tutorial> tuts = new ArrayList<Tutorial>();//tuts of course
+		private ArrayList<Lab> labs = new ArrayList<Lab>();//labs of course
 		private Map<Student, String> students = new HashMap<Student, String>(); //{Student: Index}, index "Lecture" = no tut/lab
 		private static final long serialVersionUID = -3914670736074682579L;
 
@@ -58,15 +58,30 @@ import java.io.IOException;
 			return reg;
 		}
 
+		/*	
+			*
+			*register student for a tut
+			*add student to the students arraylist of tut
+			*@param student: for registering
+			*
+		*/
 		public void regTut(Student student){
 			students.add(student);
 			vacancy --;
 			reg++;
 		}
 
+		/*
+			*return student list of tut
+		*/
+
 		public List getStudent(){
 			return students;
 		}
+
+		/*
+			*print all student of tut
+		*/
 
 		public void printStudent(){
 			System.out.println("    ===========List of students of index " + index +" ===========");
@@ -108,16 +123,32 @@ import java.io.IOException;
 			return reg;
 		}
 
+		/*
+			*
+			*register a student for a lab
+			*add student to the students arraylist
+			*@param student: for registering
+			*
+		*/
+
 		public void regLab(Student student){
 			students.add(student);
 			vacancy --;
 			reg++;
 		}
 
+		/*
+			*return list of students
+		*/
 		public List getStudent(){
 			return students;
 		}
 
+		/*
+			*
+			*printing all student registered to a lab
+			*
+		*/
 		public void printStudent(){
 			System.out.println("    ===========List of students of index " + index +" ===========");
 			for (Student s : students){
@@ -180,6 +211,11 @@ import java.io.IOException;
 	public Map<String, Integer> getCourseworkWeightage(){
 		return coursework;
 	}
+
+	/*
+		*print all weightage 
+		*include exam and all coursework
+	*/
 	
 	public void printWeightage(){
 		System.out.printf("Exam: %d percent\n", exam);
@@ -194,6 +230,13 @@ import java.io.IOException;
 		return vacancy;
 	}
 
+	/*
+		*
+		*method for adding a tutorial to the tutrial arraylist
+		*@param tut: add to arraylist tuts 
+		*
+	*/
+
 	public void addTut(Tutorial tut){
 		tuts.add(tut);
 	}
@@ -202,11 +245,22 @@ import java.io.IOException;
 		return tuts.size();
 	}
 
+	/*
+		*print all the index of a tutorial and its vacancy
+	*/
+
 	public void printTut(){
 		for (Tutorial t : tuts){
 			System.out.printf("Index: %s === Vacancy: %d\n", t.getIndex(), t.getVacancy());
 		}
 	}
+
+	/*
+		*
+		*add lab to the labs arraylist
+		*@param lab
+		*
+	*/
 
 	public void addLab(Lab lab){
 		labs.add(lab);
@@ -216,11 +270,22 @@ import java.io.IOException;
 		return labs.size();
 	}
 
+	/*
+		*print index of a lab and its student
+	*/
+
 	public void printLab(){
 		for (Lab l : labs){
 			System.out.printf("Index: %s === Vacancy: %d\n", l.getIndex(), l.getVacancy());
 		}
 	}
+
+	/*
+		*
+		*add student to course without tut and lab
+		*@param stu: add to arraylist students 
+		*
+	*/
 
 	public int addStudent(Student stu){
 		if (vacancy <1 ) { // no vacancy
@@ -236,6 +301,12 @@ import java.io.IOException;
 		return 0;
 	}
 	
+	/*
+		*
+		*add student to course with tut and lab
+		*@param student: add to students arraylist
+		*@param index: index for adding student to tut and lab
+	*/
 	public int addStudent(Student stu, String index){
 		Tutorial ttemp = new Tutorial();
 		Boolean tflag = false; // true if tutorial found by index
@@ -273,6 +344,12 @@ import java.io.IOException;
 		return 0;
 	}
 
+	/*
+		*
+		*return number of student registered to a course
+		*
+	*/
+
 	public int getSizeStudent(){
 		int size =0;
 		Iterator it = students.entrySet().iterator();
@@ -281,6 +358,12 @@ import java.io.IOException;
 		}
 		return size;
 	}
+
+	/*
+		*
+		*print all student registered to this course
+		*
+	*/
 
 	public void printStudent(){
 		System.out.println("=========================================================");
@@ -303,6 +386,13 @@ import java.io.IOException;
 			}
 		}
 	}
+
+	/*
+		*
+		*print all student registered to a course with a specific index
+		*@param index: index for which student are registered to
+		*
+	*/
 
 	public void printStudent(String index){
 		System.out.println("=========================================================");
@@ -338,6 +428,12 @@ import java.io.IOException;
 		}	
 	}
 
+	/*
+		*
+		*print out all indexes and their respective vancancy
+		*
+	*/
+
 	public void printIndex(){
 		if (!hasTut && !hasLab) return;
 		for (Tutorial t : tuts){
@@ -347,6 +443,13 @@ import java.io.IOException;
 			System.out.println(".");
 		}
 	}
+
+	/*
+		*
+		*print stats of this course
+		*include all students registered to this course and their marks/5
+		*
+	*/
 
 	public void printStats(){
 		if (students.size() == 0){
@@ -359,29 +462,38 @@ import java.io.IOException;
 		}
 	}
 
+	/*
+		*
+		*method to add index to this course
+		*each index has the same vacancy
+		*each index include at least 1 tut; lab is not compulsory
+		*1 index corresponds with 1 tut (and lab) inside the tuts (labs) arraylist
+		*
+	*/
+
 	public int addIndex(){
 		Scanner sc = new Scanner(System.in);
 		try{
 			System.out.print("Enter number of index(es) for " +getCode() +": ");
-			int num = sc.nextInt();
+			int num = sc.nextInt();//take in number of index
 			if (num <1){
 				System.out.println("Invalid Input!");
 				return 1;
 			} 
 			System.out.print("Enter vacancy for each index (each index has equal vacancy): ");
-			int vacancy = sc.nextInt();
+			int vacancy = sc.nextInt();//take in vacancy for each index
 			if (vacancy < 1){
 				throw new InputMismatchException("Negative Vacancy");
 			}
 			if (vacancy *num != getVacancy()) return 2; // number of vacancy does not match		
 			for (int i=0; i<num; i++){
 				System.out.print("Enter index for index number "+(i+1) + ": ");
-				String index = sc.next();
-				if (hasTut) addTut(new Tutorial(index, vacancy));
-				if (hasLab) addLab(new Lab(index, vacancy));
+				String index = sc.next();//take in index
+				if (hasTut) addTut(new Tutorial(index, vacancy));//adding tut 
+				if (hasLab) addLab(new Lab(index, vacancy));//adding lab
 			}
 		} catch(InputMismatchException e){
-			sc.nextLine();
+			sc.nextLine();//clearing the input buffer
 			System.out.println("Invalid Input!");
 			return 1;
 		} catch(Exception e){
@@ -391,15 +503,27 @@ import java.io.IOException;
 		return 0;
 	}
 
+	/*
+		*
+		*method for adding weightage to this course
+		*including exam weightage and coursework weightage
+		*
+	*/
+
 	public int addWeightage(){
 		Scanner sc = new Scanner(System.in);
 		int sum =0;
+		int tmp =0;
 		if (coursework.size() > 0){ //coursework weightage already added
 			return 3;
 		}
 		try {
 			System.out.print("Enter exam weightage(%): ");
-			exam = sc.nextInt();
+			tmp = sc.nextInt();//take in exam weightage
+			if (tmp <0 || tmp >100){
+				throw new InputMismatchException();
+			}
+			tmp = exam;
 			System.out.print("Enter number of component in coursework: ");
 			int compo = sc.nextInt();
 			if (compo < 1){
@@ -407,9 +531,9 @@ import java.io.IOException;
 			}
 			for (int i =0; i<compo; i++){
 				System.out.print("Enter component name: ");
-				String component = sc.next();
+				String component = sc.next();//take in component of coursework name
 				System.out.print("Enter component weightage(%): ");
-				int weight = sc.nextInt();
+				int weight = sc.nextInt();//take in the component's weightage
 				if (weight < 1 || weight > 100){
 					throw new InputMismatchException();
 				}
@@ -417,17 +541,20 @@ import java.io.IOException;
 			}
 		} catch(InputMismatchException e){
 			System.out.println("Invalic Input!");
+			coursework = new HashMap<String, Integer>();//reset the coursework weightage record
 			return 1;
 		} catch(Exception e){
 			System.out.println("Error!");
+			coursework = new HashMap<String, Integer>();//reset the coursework weightage record
 			return -1;
 		} 
-		// check if mark add up to 100%
+		// check if weighatge add up to 100%
 		for (int v : coursework.values()){
 			sum += v;
 		}
 
 		if (exam + sum != 100){
+			coursework = new HashMap<String, Integer>();//reset 
 			return 2;
 		}
 		return 0;

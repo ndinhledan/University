@@ -8,15 +8,15 @@ import java.io.EOFException;
 //close scanner when exit
 public class University{
 	private static String name;
-	private static ArrayList<Course> courses = new ArrayList<Course>();
-	private static ArrayList<Student> students = new ArrayList<Student>();
-	private static ArrayList<Professor> profs = new ArrayList<Professor>();
-	private static Boolean isQuit = false;
-	/*public University(String name){
-		this.name = name;
-	}*/
+	private static ArrayList<Course> courses = new ArrayList<Course>(); //list of courses of university
+	private static ArrayList<Student> students = new ArrayList<Student>();// list of students of university
+	private static ArrayList<Professor> profs = new ArrayList<Professor>();// list of professor of university
+	private static Boolean isQuit = false; //boolean for controlling the app
 
-
+	/*
+		*
+		*method to
+	*/
 	public static Boolean ifQuit(){
 		return isQuit;
 	}
@@ -25,6 +25,11 @@ public class University{
 		return name;
 	}
 
+	/*
+		*
+		*method for printing all students in university
+		*
+	*/
 	public static void printStudent(){
 		System.out.println("          =========List of students========");
 			for (Student s : students){
@@ -32,6 +37,12 @@ public class University{
 		}
 		System.out.printf("\n\n\n");
 	}
+
+	/*
+		*
+		*method for printing all courses in university
+		*
+	*/
 
 	public static void printCourse(){
 		System.out.println("      =========List of course==========");
@@ -42,6 +53,13 @@ public class University{
 		}
 		System.out.printf("\n\n\n");
 	}
+
+	/*
+		*
+		*method for printing all course registered to a student
+		*@param student: for getting courses
+		*
+	*/
 
 	public static void printCourse(Student student){
 		System.out.println("      =========List of course==========");
@@ -54,6 +72,12 @@ public class University{
 
 	}
 
+	/*
+		*
+		*method for printing all professors in university
+		*
+	*/
+
 	public static void printProfessor(){
 		System.out.println("          ==========Professors=========");
 		for (Professor p : profs){
@@ -61,23 +85,16 @@ public class University{
 		}
 	}
 
+	/*
+		*
+		*method for adding new course into courses
+		*
+	*/
+
 	public static int addCourse(){
 		Scanner sc = new Scanner(System.in);
 		String ccode = "";
 		String cname = "";
-		try{
-			System.out.print("Enter course code: ");
-			ccode = sc.next();
-			for (Course c : courses){
-				if (c.getCode().equals(ccode)){
-					return 1; //course exist already
-				}
-			}
-			System.out.print("Enter course name: ");
-			cname = sc.nextLine();
-		} catch(Exception e){
-			e.printStackTrace();
-		}
 		Boolean tut = true;
 		Boolean lab = true;
 		Professor prof = new Professor();
@@ -86,8 +103,34 @@ public class University{
 		int vacancy = 0;
 		Boolean pflag = false;
 		Boolean vflag = false;
+
+		try{
+			System.out.println("\n\n");
+			System.out.println("==========================================");
+			System.out.print("Enter course code: ");
+			ccode = sc.next();//take in course code
+			/*
+				*check if course exist
+			*/
+			if (courses != null){
+				for (Course c : courses){
+					if (c.getCode().equals(ccode)){
+						return 1; //course exist already
+					}
+				}
+			}
+			System.out.println("\n\n");
+			System.out.println("==========================================");
+			System.out.print("Enter course name: ");
+			cname = sc.nextLine();//take in course name
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+
 		try {
 			do {
+				System.out.println("\n\n");
+				System.out.println("==========================================");
 				System.out.printf("Does %s have tutorial?\n", ccode);
 				System.out.println("1.Yes");
 				System.out.println("2.No");
@@ -106,6 +149,8 @@ public class University{
 				}
 			} while (choice1 <1 || choice1 >2);
 			do {
+				System.out.println("\n\n");
+				System.out.println("==========================================");
 				System.out.printf("Does %s have lab?\n", ccode);
 				System.out.println("1.Yes");
 				System.out.println("2.No");
@@ -134,10 +179,12 @@ public class University{
 		System.out.println("Choose the course coordiantor");
 		do{
 			try{ 
+				System.out.println("\n\n");
+				System.out.println("==========================================");
 				System.out.print("Enter the coordinator of your choice by ID: ");
-				String pid = sc.next();
+				String pid = sc.next(); //take in professor id
 				for (Professor p: profs){
-					if(pid.equals(p.getID())){
+					if(pid.equals(p.getID())){ //check if professor is valid
 						prof = p;
 						pflag = true;
 						break;
@@ -152,8 +199,10 @@ public class University{
 		} while (!pflag);
 		do {
 			try { // vacancy negative number
+				System.out.println("\n\n");
+				System.out.println("==========================================");
 				System.out.print("Enter vacancy for the course: ");
-				vacancy = sc.nextInt();
+				vacancy = sc.nextInt();//take in vacancy
 				if (vacancy < 1){
 					throw new InputMismatchException("Negative vacancy");
 				}
@@ -165,43 +214,63 @@ public class University{
 				e.printStackTrace();
 			}
 		} while (!vflag);
-		Course cour = new Course(ccode, cname, tut, lab, prof, vacancy);
-		courses.add(cour);
+		Course cour = new Course(ccode, cname, tut, lab, prof, vacancy); //create new course
+		courses.add(cour); // add to courses
 		return 0;
 	}
+
+	/*
+		*
+		*method for adding new student to students
+		*
+	*/
 
 	public static int addStudent(){
 		Scanner sc = new Scanner(System.in);
 		String smatric;
 		String sname;
 		try{
+			System.out.println("\n\n");
+			System.out.println("==========================================");
 			System.out.print("Enter student matric: ");
-			smatric = sc.nextLine();
+			smatric = sc.nextLine(); //take in matric
 			if (smatric.length() !=9){
-				return 2;//invalid matric
+				return 2;//invalid matric (length of matric =9)
 			}
-			if (students != null){
+			if (students != null){ //check for duplicate student
 				for (Student s : students){
 					if (s.getMatric().equals(smatric)) return 1;
 				}
 			}
+
+			System.out.println("\n\n");
+			System.out.println("==========================================");	
 			System.out.print("Enter student name: ");
-			sname = sc.nextLine();
+			sname = sc.nextLine();//take in student name
 		} catch(Exception e){
 			e.printStackTrace();
 			return -1;
 		}
-		Student stu = new Student(sname, smatric);
-		students.add(stu);
+		Student stu = new Student(sname, smatric);//create new student
+		students.add(stu);//add to students
 		return 0;
 	}
 
+	/*
+		*
+		*University app
+		*
+	*/
+
 	public static void app(String name) throws InputMismatchException{
 		Scanner sc = new Scanner(System.in);
-		String profFile = "Professor.dat";
+		/*
+			*data files
+		*/
+		String profFile = "Professor.dat"; 
 		String stuFile = "Student.dat";
 		String courseFile = "Course.dat";
-		int choice;
+		int choice;//variable for switch
 		do {
 			System.out.printf("========Welcome to the %s University SCRAME=======\n", name);
 			System.out.println("1.Add a student");
@@ -212,8 +281,8 @@ public class University{
 			System.out.println("6.Enter course assesment components weightage");
 			System.out.println("7.Enter coursework mark - inclusize of its components");
 			System.out.println("8.Enter exam mark");
-			System.out.println("9.Print course stats/Print course");
-			System.out.println("10.Print student transcript/Print student");
+			System.out.println("9.Print course stats");
+			System.out.println("10.Print student transcript");
 			System.out.println("11.Save");
 			System.out.println("12.Save & Exit");
 			System.out.println("13.Exit without saving");
@@ -226,7 +295,7 @@ public class University{
 				throw e;
 			}
 			switch (choice){
-				case 1:
+				case 1: //add a student
 					int check1 = addStudent();
 					if (check1 ==1){
 						System.out.println(">>>>>>>>>>Student already exist!<<<<<<<<<<");
@@ -240,7 +309,7 @@ public class University{
 					printStudent();
 					System.out.println("\n\n\n\n");
 					break;
-				case 2:
+				case 2: //add a course
 					int check2 = addCourse();
 					if (check2 ==1){
 						System.out.println(">>>>>>>>>>Course already exist!<<<<<<<<<<");
@@ -251,15 +320,21 @@ public class University{
 					printCourse();
 					System.out.println("\n\n\n\n");
 					break;
-				case 3:
+				case 3: //register a student
 					if (courses.size() == 0){
 						System.out.println(">>>>>>>>>>No course!<<<<<<<<<<");
 						break;
 					}
+					System.out.println("\n\n");
+					System.out.println("==========================================");
 					System.out.print("Enter student by matric: ");
-					String matric3 = sc.next();
+					String matric3 = sc.next();//take in matric
 					Boolean sflag3 = false;
 					Student stemp3 = new Student();
+					
+					/*
+						*check if student exist
+					*/
 					for (Student s :students){
 						if (s.getMatric().equals(matric3)) {
 							stemp3 = s;
@@ -271,12 +346,19 @@ public class University{
 						System.out.println("\n\n\n\n");
 						break;
 					}
+					
 					System.out.println("Adding student " + stemp3.getName() + " to a course\n");
 					printCourse();
+					System.out.println("\n\n");
+					System.out.println("==========================================");
 					System.out.print("Enter course code: ");						
-					String code3 = sc.next();
+					String code3 = sc.next();//take in course code
 					Course ctemp3 = new Course();
 					Boolean cflag3 = false;
+					
+					/*
+						*check if course exist
+					*/
 					for (Course c : courses){
 						if (c.getCode().equals(code3)) {
 							ctemp3 = c;
@@ -287,8 +369,9 @@ public class University{
 						System.out.println(">>>>>>>>>>No course found<<<<<<<<<<");
 						break;
 					}
+
 					if (!ctemp3.includeTut() && !ctemp3.includeLab()){ // course with no tut and lab
-						int check3 = stemp3.addCourse(ctemp3); //use the appropriate add course version 
+						int check3 = stemp3.addCourse(ctemp3); //register a course to student without index 
 						if (check3 == 0){ 
 							System.out.println(">>>>>>>>>>Student " +
 					  stemp3.getName() + " added successfully to " + ctemp3.getCode() + "<<<<<<<<<<");
@@ -301,11 +384,17 @@ public class University{
 								" already registered to " + ctemp3.getCode() + " <<<<<<<<<<");
 						}
 					}
-					else { // Enter for index
+					/*
+						*course with tut and lab
+						*register index
+					*/
+					else {
 						ctemp3.printIndex();
+						System.out.println("\n\n");
+						System.out.println("==========================================");
 						System.out.print("Enter index to register: ");
-						String intmp3 = sc.next();
-						int check3 = stemp3.addCourse(ctemp3, intmp3);
+						String intmp3 = sc.next();//take in index
+						int check3 = stemp3.addCourse(ctemp3, intmp3);//register course to student with index
 						if (check3 == 0) {
 							System.out.println(">>>>>>>>>>Student " +
 							stemp3.getName() + " added successfully to index " + intmp3 + " of " + ctemp3.getCode() + " <<<<<<<<<<");
@@ -322,7 +411,7 @@ public class University{
 						}
 					}
 					break;
-				case 4:
+				case 4://check available slots
 					System.out.println("\n\n");
 					System.out.println("==========================================");
 					if (courses.size() == 0) {
@@ -330,10 +419,15 @@ public class University{
 						System.out.println("\n\n\n\n");
 						break;
 					}
+					System.out.println("\n\n");
+					System.out.println("==========================================");
 					System.out.print("Enter course code: ");						
-					String code4 = sc.next();
+					String code4 = sc.next();//take in course code
 					Course ctemp4 = new Course();
 					Boolean cflag4 = false;
+					/*
+						*check if course exist
+					*/
 					for (Course c : courses){
 						if (c.getCode().equals(code4)){
 							ctemp4 = c;
@@ -346,23 +440,29 @@ public class University{
 						System.out.println("\n\n\n\n");
 						break;
 					}
+
 					System.out.println("Course " + ctemp4.getCode() +" have " + ctemp4.getVacancy() + " free slots!");
-					ctemp4.printIndex();
+					ctemp4.printIndex();//print indexes and their respective vacancy
 					System.out.println("\n\n\n\n");
 					break;
-				case 5:
+				case 5://print student list
 					int choice5 =0;
 					System.out.println("\n\n");
 					System.out.println("==========================================");
-					if (courses.size() == 0) {
+					if (courses.size() == 0){ //check if there is any course exist
 						System.out.println(">>>>>>>>>>No courses<<<<<<<<<<");
 						System.out.println("\n\n\n\n");
 						break;
 					}
+					System.out.println("\n\n");
+					System.out.println("==========================================");
 					System.out.print("Enter course code: ");						
-					String code5 = sc.next();
+					String code5 = sc.next();//take in course code
 					Course ctemp5 = new Course();
 					Boolean cflag5 = false;
+					/*
+						*check if course exist
+					*/
 					for (Course c : courses){
 						if (c.getCode().equals(code5)){
 							ctemp5 = c;
@@ -375,14 +475,16 @@ public class University{
 						System.out.println("\n\n\n\n");
 						break;
 					}
-					if (!ctemp5.includeTut() && !ctemp5.includeLab()){
-						ctemp5.printStudent();
+
+					if (!ctemp5.includeTut() && !ctemp5.includeLab()){//course printed doesn't have tut and lab
+						ctemp5.printStudent();//printing student
 						System.out.println("\n\n\n");
 						break;
 					}
 					try {
 						System.out.println("1.Print students by lecture");
 						System.out.println("2.Print students by tutorial/lab");
+						System.out.println("==========================================");
 						System.out.print("Enter choice: ");
 						choice5 = sc.nextInt();
 					} catch(InputMismatchException e){
@@ -393,11 +495,13 @@ public class University{
 						break;
 					}
 					switch (choice5){
-						case 1:
+						case 1://print all student not specific to index
 							ctemp5.printStudent();
 							break;
-						case 2:
+						case 2://print student according to index
 							ctemp5.printIndex();
+							System.out.println("\n\n");
+							System.out.println("==========================================");
 							System.out.print("Enter index to print students: ");
 							String indextmp5 = sc.next();
 							ctemp5.printStudent(indextmp5);
@@ -408,18 +512,23 @@ public class University{
 					}
 					System.out.println("\n\n\n");
 					break;
-				case 6:
-					if (courses.size() == 0) {
+				case 6: //enter weightage
+					if (courses.size() == 0){//check if any course exist
 						System.out.println(">>>>>>>>>>No courses<<<<<<<<<<");
 						System.out.println("\n\n\n\n");
 						break;
 					}
 					printCourse();
+					System.out.println("\n\n");
+					System.out.println("==========================================");		
 					System.out.print("Enter course code: ");						
-					String code6 = sc.next();
+					String code6 = sc.next();//take in course code
 					Course ctemp6 = new Course();
 					Boolean cflag6 = false;
 					int check6;
+					/* 
+						*check if any course exist
+					*/
 					for (Course c : courses){
 						if (c.getCode().equals(code6)){
 							ctemp6 = c;
@@ -432,8 +541,9 @@ public class University{
 						System.out.println("\n\n\n\n");
 						break;
 					}
+
 					do {
-						check6 = ctemp6.addWeightage();
+						check6 = ctemp6.addWeightage();//adding weightage
 						if (check6 == 2) System.out.println(">>>>>>>>>>Coursework do not add up to 100 percent<<<<<<<<<<<");
 					} while (check6 !=0 && check6 != 3);
 					if (check6 == 0) System.out.println(">>>>>>>>>>Course assesment components weightage added successfully!<<<<<<<<<<");
@@ -441,15 +551,18 @@ public class University{
 						
 					System.out.println("\n\n\n\n");
 					break;	
-				case 7:
-					if (courses.size() == 0){
+				case 7://enter coursework mark
+					if (courses.size() == 0){//check if any course exist
 						System.out.println(">>>>>>>>>>No course<<<<<<<<<<");
 						break;
 					}
 					System.out.print("Enter student by matric: ");
-					String matric7 = sc.next();
+					String matric7 = sc.next();//take in student matric
 					Student stemp7 = new Student();
 					Boolean sflag7 = false;
+					/*
+						*check if student exist
+					*/
 					for (Student s :students){
 						if (s.getMatric().equals(matric7)) {
 							stemp7 = s;
@@ -461,12 +574,16 @@ public class University{
 						System.out.println("\n\n\n\n");
 						break;
 					}
+
 					System.out.println("Student " + stemp7.getName() + "\n");
-					printCourse(stemp7);
+					printCourse(stemp7);//print courses registered to student
 					System.out.print("Enter course code: ");						
-					String code7 = sc.next();
+					String code7 = sc.next();//take in course code
 					Course ctemp7 = new Course();
 					Boolean cflag7 = false;
+					/*
+						*check if course exist
+					*/
 					for (Course c : courses){
 						if (c.getCode().equals(code7)) {
 							ctemp7 = c;
@@ -477,7 +594,8 @@ public class University{
 						System.out.println(">>>>>>>>>>No course found<<<<<<<<<<");
 						break;
 					}
-					int check7 = stemp7.addCourseworkMark(ctemp7);
+
+					int check7 = stemp7.addCourseworkMark(ctemp7);//adding coursework mark
 					if (check7 == 0){
 						System.out.println(">>>>>>>>>>Coursework marks of student " + stemp7.getName() 
 							+ " added successfully for course " 
@@ -503,15 +621,18 @@ public class University{
 					}
 					System.out.println("\n\n\n");
 					break;
-				case 8:
+				case 8://enter exam mark
 					if (courses.size() == 0){
 						System.out.println(">>>>>>>>>>No course<<<<<<<<<<");
 						break;
 					}
 					System.out.print("Enter student by matric: ");
-					String matric8 = sc.next();
+					String matric8 = sc.next();//take in matric
 					Student stemp8 = new Student();
 					Boolean sflag8 = false;
+					/*
+						*check if student exist
+					*/
 					for (Student s :students){
 						if (s.getMatric().equals(matric8)) {
 							stemp8 = s;
@@ -524,11 +645,14 @@ public class University{
 						break;
 					}
 					System.out.println("Student " + stemp8.getName() + "\n");
-					printCourse(stemp8);
+					printCourse(stemp8);//printing course registered to this tudent
 					System.out.print("Enter course code: ");						
 					String code8 = sc.next();
 					Course ctemp8 = new Course();
 					Boolean cflag8 = false;
+					/*
+						*check if student exist
+					*/
 					for (Course c : courses){
 						if (c.getCode().equals(code8)) {
 							ctemp8 = c;
@@ -540,7 +664,7 @@ public class University{
 						System.out.println(">>>>>>>>>>No course found<<<<<<<<<<");
 						break;
 					}
-					int check8 = stemp8.addExamMark(ctemp8);
+					int check8 = stemp8.addExamMark(ctemp8);//adding exam mark
 					if (check8 == 0){
 						System.out.println(">>>>>>>>>>Exam marks of student " + stemp8.getName() 
 							+ " added successfully for course " 
@@ -562,15 +686,19 @@ public class University{
 					}
 					System.out.println("\n\n\n");
 					break;
-				case 9:
+				case 9://print course stats
 					if (courses.size() == 0){
 						System.out.println(">>>>>>>>>>No course<<<<<<<<<<");
 						break;
 					}
 					System.out.print("Enter course code: ");						
-					String code9 = sc.next();
+					String code9 = sc.next();//take in course code
 					Course ctemp9 = new Course();
 					Boolean cflag9 = false;
+					/* 
+						*check if course exist
+					*/
+
 					for (Course c : courses){
 						if (c.getCode().equals(code9)) {
 							ctemp9 = c;
@@ -582,18 +710,21 @@ public class University{
 						System.out.println(">>>>>>>>>>No course found<<<<<<<<<<");
 						break;
 					}
-					ctemp9.printStats();
+					ctemp9.printStats();//printing stats
 					System.out.println("\n\n\n\n");
 					break;
-				case 10:
+				case 10://print student transcript
 					if (students.size() == 0){
 						System.out.println(">>>>>>>>>>No course<<<<<<<<<<");
 						break;
 					}
 					System.out.print("Enter student by matric: ");
-					String matric10 = sc.next();
+					String matric10 = sc.next();//take in student matric
 					Boolean sflag10 = false;
 					Student stemp10 = new Student();
+					/*
+						*check if student exist
+					*/
 					for (Student s :students){
 						if (s.getMatric().equals(matric10)) {
 							stemp10 = s;
@@ -605,12 +736,17 @@ public class University{
 						System.out.println("\n\n\n\n");
 						break;
 					}
-					stemp10.printTranscript();
+					stemp10.printTranscript();//printing student transcript
 					System.out.println("\n\n\n\n");
 					break;
-				case 11:
+				case 11://save
 					try {
 						System.out.println("Saving data ......");
+						/*
+							*
+							*writing data to files
+							*
+						*/
 						SerializeDB.writeSerializedObject(profFile, profs);
 						SerializeDB.writeSerializedObject(stuFile, students);
 						SerializeDB.writeSerializedObject(courseFile, courses);
@@ -622,9 +758,14 @@ public class University{
 						e.printStackTrace();
 					}
 					break;
-				case 12:
+				case 12://save and exit
 					try {
 						System.out.println("Saving data ......");
+						/*
+							*
+							*writing data to files
+							*
+						*/
 						SerializeDB.writeSerializedObject(profFile, profs);
 						SerializeDB.writeSerializedObject(stuFile, students);
 						SerializeDB.writeSerializedObject(courseFile, courses);
@@ -636,13 +777,13 @@ public class University{
 						e.printStackTrace();
 					}
 					System.out.println("\n\n\n\n");
-					isQuit = true;
+					isQuit = true;//stopping program
 					System.out.println("SCRAME closing ......");
 					System.out.println("\n\n\n\n");
 					break;
 			
-				case 13:
-					isQuit = true;
+				case 13://exit without saving
+					isQuit = true;//stopping program
 					System.out.println("SCRAME closing ......");
 					System.out.println("\n\n\n\n");
 					break;
