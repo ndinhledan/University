@@ -80,6 +80,22 @@ import java.io.IOException;
 		}
 
 		/*
+			*
+			*method for updating a student
+			*
+		*/
+
+		public void updateStudent(Student student){
+			for (Student s : students){
+				if (s.equals(student)){
+					students.remove(s);
+					students.add(student);
+					break;
+				}
+			}
+		}
+
+		/*
 			*print all student of tut
 		*/
 
@@ -146,6 +162,22 @@ import java.io.IOException;
 
 		/*
 			*
+			*method for updating a student
+			*
+		*/
+			
+		public void updateStudent(Student student){
+			for (Student s : students){
+				if (s.equals(student)){
+					students.remove(s);
+					students.add(student);
+					break;
+				}
+			}
+		}
+
+		/*
+			*
 			*printing all student registered to a lab
 			*
 		*/
@@ -183,30 +215,71 @@ import java.io.IOException;
 	//Methods
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
+	/*
+		*
+		*@return code of this course
+		*
+	*/
 
 	public String getCode(){
 		return code;
 	}
 
+	/*
+		*
+		*@return name of this course
+		*
+	*/
+
 	public String getName(){
 		return name;
 	}
+
+	/*
+		*
+		*@return Boolean if this course has tut
+		*
+	*/
 
 	public boolean includeTut(){
 		return hasTut;
 	}
 
+	/*
+		*
+		*@return Boolean if this course has lab
+		*
+	*/
+
 	public boolean includeLab(){
 		return hasLab;
 	}
+
+	/*
+		*
+		*@return coordinator for this course
+		*
+	*/
 
 	public Professor getCoordinator(){
 		return coordinator;
 	}
 
+	/*
+		*
+		*@return exam weightage for this course
+		*
+	*/
+
 	public int getExamWeightage(){
 		return exam;
 	}
+
+	/*
+		*
+		*@return coursework weightage map of this course
+		*
+	*/
 
 	public Map<String, Integer> getCourseworkWeightage(){
 		return coursework;
@@ -226,6 +299,12 @@ import java.io.IOException;
 		}
 	}
 
+	/*
+		*
+		*@return vacancy for this course
+		*
+	*/
+
 	public int getVacancy(){
 		return vacancy;
 	}
@@ -240,6 +319,12 @@ import java.io.IOException;
 	public void addTut(Tutorial tut){
 		tuts.add(tut);
 	}
+
+	/*
+		*
+		*@return number of students registered to this tutorial
+		*
+	*/
 
 	public int getSizeTut(){
 		return tuts.size();
@@ -257,6 +342,36 @@ import java.io.IOException;
 
 	/*
 		*
+		*method to return if this course has this tutorial or not
+		@param: String index of tutorial
+		*
+	*/
+
+	public Boolean existTutorial(String index){
+		for (Tutorial t : tuts){
+			if (index.equals(t.getIndex())) return true;
+		}
+		return false;
+	}
+
+	/*
+		*
+		*method to find tutorial
+		@param: String index used to find tutorial
+		@return Tutorial object found inside Tutorials
+		@return null if not found
+		*
+	*/
+
+	public Tutorial findTutorial(String index){
+		for (Tutorial t : tuts){
+			if (index.equals(t.getIndex())) return t;
+		}
+		return null;
+	}
+
+	/*
+		*
 		*add lab to the labs arraylist
 		*@param lab
 		*
@@ -265,6 +380,12 @@ import java.io.IOException;
 	public void addLab(Lab lab){
 		labs.add(lab);
 	}
+
+	/*
+		*
+		*@return number of students inside registered to a lab
+		*
+	*/
 
 	public int getSizeLab(){
 		return labs.size();
@@ -282,22 +403,57 @@ import java.io.IOException;
 
 	/*
 		*
-		*add student to course without tut and lab
-		*@param stu: add to arraylist students 
+		*method to return if this course has this lab or not
+		@param: String index of lab
 		*
 	*/
 
-	public int addStudent(Student stu){
+	public Boolean existLab(String index){
+		for (Lab l : labs){
+			if (index.equals(l.getIndex())) return true;
+		}
+		return false;
+	}
+
+	/*
+		*
+		*method to find Lab
+		@param: String index used to find Lab
+		@return Lab object found inside Labs
+		@return null if not found
+		*
+	*/
+
+	public Lab findLab(String index){
+		for (Lab l : labs){
+			if (index.equals(l.getIndex())) return l;
+		}
+		return null;
+	}
+
+
+	/*
+		*
+		*add student to course without tut and lab
+		*@param stu: add to arraylist students 
+		@return exit value:
+		0: success
+		2: no vacancy
+		3: student already registered
+		4: course cannot be registered because it has not added coursework weightage
+		*
+	*/
+
+	public int addStudent(Student student){
+		if (getExamWeightage() == 0 && getCourseworkWeightage().size() == 0){
+			return 4;
+		}
 		if (vacancy <1 ) { // no vacancy
 			return 2;
 		}
-		for (Student s : students.keySet()){ //duplicate student
-			if (s.equals(stu)){
-				return 3;
-			}
-		}
+		if (existStudent(student.getMatric())) return 3;//duplicate student
 		vacancy--;
-		students.put(stu, "Lecture");
+		students.put(student, "Lecture");
 		return 0;
 	}
 	
@@ -306,42 +462,64 @@ import java.io.IOException;
 		*add student to course with tut and lab
 		*@param student: add to students arraylist
 		*@param index: index for adding student to tut and lab
+		*
+		@return an exit value:
+		0: success
+		1: wrong index passed
+		2: index has no vacancy
+		3: student already registered for this course
+		4: course cannot be registered because it has not added coursework weightage
+		*
 	*/
-	public int addStudent(Student stu, String index){
-		Tutorial ttemp = new Tutorial();
-		Boolean tflag = false; // true if tutorial found by index
-		Lab ltemp = new Lab();
-		Boolean lflag = false; // true if lab found by index
-		for (Tutorial t : tuts){
-			if(t.getIndex().equals(index)){
-				ttemp = t;
-				tflag = true;
-				break;
-			}
+	public int addStudent(Student student, String index){
+		if (getExamWeightage() == 0 && getCourseworkWeightage().size() == 0){
+			return 4;
 		}
-		for (Lab l : labs){
-			if(l.getIndex().equals(index)){
-				ltemp = l;
-				lflag = true;
-				break;
-			}
-		}
-		if (!tflag && !lflag){ //either tut or lab cannot be found i.e wrong index
+		Tutorial ttemp = findTutorial(index);
+		Lab ltemp = findLab(index);
+
+		if (ttemp == null && ltemp == null){ //either tut or lab cannot be found i.e wrong index
 			return 1;
 		}
 		if (vacancy <1 || (ttemp.getVacancy() <1 && ltemp.getVacancy() <1)) { //no vacancy
 			return 2;
 		}
-		for (Student s : students.keySet()){ //student alread registered
-			if (s.equals(stu)){
-				return 3;
-			}
-		}
+		if (existStudent(student.getMatric())) return 3;//student already registered
 		vacancy--;
-		ttemp.regTut(stu);
-		ltemp.regLab(stu);
-		students.put(stu, index);
+		ttemp.regTut(student);
+		if (ltemp != null) ltemp.regLab(student);
+		students.put(student, index);
 		return 0;
+	}
+
+	/*
+		*
+		*method to return if student has registered to this course or not
+		@param: String matric of student
+		*
+	*/
+
+	public Boolean existStudent(String matric){
+		for (Student s : students.keySet()){
+			if (matric.equals(s.getMatric())) return true;
+		}
+		return false;
+	}
+
+	/*
+		*
+		*method to find student
+		@param: String matric used to find student
+		@return Student object found inside students
+		@return null if not found
+		*
+	*/
+
+	public Student findStudent(String matric){
+		for (Student s : students.keySet()){
+			if (matric.equals(s.getMatric())) return s;
+		}
+		return null;
 	}
 
 	/*
@@ -351,12 +529,7 @@ import java.io.IOException;
 	*/
 
 	public int getSizeStudent(){
-		int size =0;
-		Iterator it = students.entrySet().iterator();
-		while (it.hasNext()){
-			size ++;
-		}
-		return size;
+		return students.size();
 	}
 
 	/*
@@ -400,25 +573,8 @@ import java.io.IOException;
 			System.out.println(">>>>>>>>>>No student has registered for this course yet!<<<<<<<<<<");
 			return;
 		}
-		Tutorial ttemp = new Tutorial();
-		Boolean tflag = false; // true if tutorial found by index
-		Lab ltemp = new Lab();
-		Boolean lflag = false; // true if lab found by index
-		for (Tutorial t : tuts){
-			if(t.getIndex().equals(index)){
-				ttemp = t;
-				tflag = true;
-				break;
-			}
-		}
-		for (Lab l : labs){
-			if(l.getIndex().equals(index)){
-				ltemp = l;
-				lflag = true;
-				break;
-			}
-		}
-		if (!tflag && !lflag){ //neither tut or lab cannot be found i.e wrong index
+		Tutorial ttemp = findTutorial(index);
+		if (ttemp == null){ //neither tut or lab cannot be found i.e wrong index
 			System.out.println(">>>>>>>>>>No index found<<<<<<<<<<");
 			return;
 		}
@@ -467,8 +623,13 @@ import java.io.IOException;
 		*method to add index to this course
 		*each index has the same vacancy
 		*each index include at least 1 tut; lab is not compulsory
-		*1 index corresponds with 1 tut (and lab) inside the tuts (labs) arraylist
+		*1 index corresponds with 1 tut (and lab if this course has lab) inside the tuts (and labs) arraylist
 		*
+		*@return an exit value:
+		*0: success
+		*1: Invalid input
+		*2: number of vacancy for indexes and vacancy for course don't match
+		*-1: unknown error
 	*/
 
 	public int addIndex(){
@@ -477,13 +638,12 @@ import java.io.IOException;
 			System.out.print("Enter number of index(es) for " +getCode() +": ");
 			int num = sc.nextInt();//take in number of index
 			if (num <1){
-				System.out.println("Invalid Input!");
-				return 1;
+				throw new InputMismatchException(">>>>>>>>>>Number of index(es) cannot be negative<<<<<<<<<");
 			} 
 			System.out.print("Enter vacancy for each index (each index has equal vacancy): ");
 			int vacancy = sc.nextInt();//take in vacancy for each index
 			if (vacancy < 1){
-				throw new InputMismatchException("Negative Vacancy");
+				throw new InputMismatchException(">>>>>>>>>>Negative Vacancy!<<<<<<<<<<<");
 			}
 			if (vacancy *num != getVacancy()) return 2; // number of vacancy does not match		
 			for (int i=0; i<num; i++){
@@ -494,10 +654,12 @@ import java.io.IOException;
 			}
 		} catch(InputMismatchException e){
 			sc.nextLine();//clearing the input buffer
-			System.out.println("Invalid Input!");
+			System.out.println(">>>>>>>>>>>Invalid Input!<<<<<<<<<<<");
+			System.out.println(e.getMessage());
 			return 1;
 		} catch(Exception e){
-			System.out.println("Error!!");
+			System.out.println(">>>>>>>>>>>Error!!<<<<<<<<<<<");
+			e.printStackTrace();
 			return -1;
 		}
 		return 0;
@@ -507,6 +669,15 @@ import java.io.IOException;
 		*
 		*method for adding weightage to this course
 		*including exam weightage and coursework weightage
+		*allow to change weightage when there is no student registered yet
+		*
+		*@return an exit value
+		*0: sucessful
+		*1: Input mismatch or invalid input
+		*2: weightages not add up to 100
+		*3: No update
+		*4: Cannot update since students are already added
+		*-1: unknown error
 		*
 	*/
 
@@ -514,20 +685,30 @@ import java.io.IOException;
 		Scanner sc = new Scanner(System.in);
 		int sum =0;
 		int tmp =0;
-		if (coursework.size() > 0){ //coursework weightage already added
-			return 3;
-		}
+		String choice = "";
 		try {
+			if (getCourseworkWeightage().size() > 0 || getExamWeightage() > 0){ //coursework weightage already added
+				if (students.size() == 0){
+					System.out.print("Coursework weightage for this course has already been added.\nDo you want to update it? (y/n): ");
+					choice = sc.nextLine();
+					if (choice.equals("n") || choice.equals("N")) return 3;
+					else if (choice.equals("y") || choice.equals("Y"));
+					else throw new InputMismatchException(">>>>>>>>>>>Please only type y or n!<<<<<<<<<<<\n\n\n");
+				}
+				else {
+					return 4;//cannot be updated
+				}
+			}
 			System.out.print("Enter exam weightage(%): ");
 			tmp = sc.nextInt();//take in exam weightage
 			if (tmp <0 || tmp >100){
-				throw new InputMismatchException();
+				throw new InputMismatchException(">>>>>>>>>>>Exam weightage cannot be negative or larger than 100!<<<<<<<<<<\n\n\n");
 			}
-			tmp = exam;
+			exam = tmp;
 			System.out.print("Enter number of component in coursework: ");
 			int compo = sc.nextInt();
-			if (compo < 1){
-				throw new InputMismatchException();
+			if (compo < 0){
+				throw new InputMismatchException(">>>>>>>>>>Number of component cannot be negative!<<<<<<<<<<\n\n\n");
 			}
 			for (int i =0; i<compo; i++){
 				System.out.print("Enter component name: ");
@@ -535,16 +716,19 @@ import java.io.IOException;
 				System.out.print("Enter component weightage(%): ");
 				int weight = sc.nextInt();//take in the component's weightage
 				if (weight < 1 || weight > 100){
-					throw new InputMismatchException();
+					throw new InputMismatchException(">>>>>>>>>>>Component weightage cannot be negative or larger than 100!<<<<<<<<<<\n\n\n");
 				}
 				coursework.put(component, weight);
 			}
 		} catch(InputMismatchException e){
-			System.out.println("Invalic Input!");
+			System.out.println(">>>>>>>>>>Invalic Input!<<<<<<<<<<");
+			System.out.println(e.getMessage());
+			exam =0;
 			coursework = new HashMap<String, Integer>();//reset the coursework weightage record
 			return 1;
 		} catch(Exception e){
-			System.out.println("Error!");
+			System.out.println(">>>>>>>>>>Error!<<<<<<<<<<");
+			exam =0;
 			coursework = new HashMap<String, Integer>();//reset the coursework weightage record
 			return -1;
 		} 
@@ -554,11 +738,18 @@ import java.io.IOException;
 		}
 
 		if (exam + sum != 100){
+			exam =0;
 			coursework = new HashMap<String, Integer>();//reset 
 			return 2;
 		}
 		return 0;
 	}
+
+	/*
+		*
+		*method for checking if 2 course objects is the same based on their course code
+		*
+	*/
 
 	public boolean equals(Object o){
 		if (o instanceof Course){
@@ -566,6 +757,54 @@ import java.io.IOException;
 			return (getCode().equals(p.getCode()));
 		}
 		return false;
+	}
+
+/*
+	*
+	*method is called whenever a student is modified (adding exam and/or coursework mark)
+	*@param student: student who is recently modified
+	*
+	*For some reasons when using serialize to write to files and read back,
+	*students object inside students arraylist in university and student object inside students dictionary in course
+	*point to different objects after reading back, even though they point to the same previously
+	*
+	*So there's a case when a student is added to a course
+	*Then the app is saved and exit
+	*After that the marks of that student is updated, but the mark of student inside course is not i.e no mark
+	*
+	*Because the mark updated is of the student in university, not the student inside course
+	*
+	*This won't happen if adding the student to a course and adding marks of that student for that course 
+	*happen in one instance without exitting the app
+	*
+*/
+
+	public void updateStudent(Student student){
+		String index ="";
+		for (Student s : students.keySet()){
+			if (s.equals(student)){
+				index = students.get(s);
+				students.remove(s);
+				students.put(student, index);
+				break;
+			}
+		}
+		if (includeTut()){
+			for (Tutorial t : tuts){
+				if (t.getIndex().equals(index)){
+					t.updateStudent(student);
+					break;
+				}
+			}
+		}
+		if (includeLab()){
+			for (Lab l : labs){
+				if (l.getIndex().equals(index)){
+					l.updateStudent(student);
+					break;
+				}
+			}
+		}
 	}
 
 }

@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -10,9 +11,9 @@ import java.io.Serializable;
 public class Student implements Serializable{
 	private String name;
 	private String matric;
-	private ArrayList<Course> courses = new ArrayList<Course>();
-	private Map<Course, Integer> examGrade = new HashMap<Course, Integer>(); //{Course: grade}
-	private Map<Course, Map<String, Integer>> courseworkGrade = new HashMap<Course, Map<String, Integer>>(); //{Course: {Coursework: Grade}}
+	private List<Course> courses = new ArrayList<Course>();
+	private Map<String, Integer> examGrade = new HashMap<String, Integer>(); //{Course code: grade} //course 
+	private Map<String, Map<String, Integer>> courseworkGrade = new HashMap<String, Map<String, Integer>>(); //{Course code: {Coursework: Grade}} // course -> String course
 	private static final long serialVersionUID = -3914670736074682579L;
 
 	public Student(String name, String matric){
@@ -34,7 +35,12 @@ public class Student implements Serializable{
 		*
 		*method for registering this student to a course without tut and lab
 		*add course to courses arraylist
-		*@param course: course to which this student is registering to
+		@param course: course to which this student is registering to
+		@return an exit value
+		0: success
+		2: no vacancy
+		3: student already registered for this course
+		4: course cannot be registered because it has not added coursework weightage
 		*
 	*/
 
@@ -58,8 +64,14 @@ public class Student implements Serializable{
 		*
 		*method for registering this student to a course with tut and lab
 		*add course to courses arraylist
-		*@param course: course to which this student is registering
-		*@param index: index to which this student is registering
+		@param course: course to which this student is registering
+		@param index: index to which this student is registering
+		@return an exit value:
+		0: success
+		1: wrong index passed
+		2: index has no vacancy
+		3: student already registered for this course
+		4: course cannot be registered because it has not added coursework weightage
 		*
 	*/
 
@@ -81,8 +93,44 @@ public class Student implements Serializable{
 		}
 	}
 
-	public ArrayList<Course> getCourse(){
+	/*
+		*
+		@return List<Course>
+		*
+	*/
+
+	public List<Course> getCourse(){
 		return courses;
+	}
+
+	/*
+		*
+		*method to check if this student has registered this course or not
+		@param: String code of course
+		*
+	*/
+
+	public Boolean existCourse(String code){
+		for (Course c : courses){
+			if (code.equals(c.getCode())) return true;
+		}
+		return false;
+	}
+
+	/*
+		*
+		*method to find course registered to a student
+		@param: String code of course
+		@return Course found
+		@return null if not found
+		*
+	*/
+
+	public Course findCourse(String code){
+		for (Course c : courses){
+			if (code.equals(c.getCode())) return c;
+		}
+		return null;
 	}
 
 	/*
@@ -92,21 +140,13 @@ public class Student implements Serializable{
 	*/
 	public int addExamMark(Course course){
 		Scanner sc = new Scanner(System.in);
-		Boolean cflag = false;
 		int grade =0;
-		for (Course c : courses){
-			if (c.equals(course)){
-				cflag = true;
-				break;
-			}
-		}
-		if (cflag == false){ //student does not registered this course
-			return 2;
-		}
+
+		if (!existCourse(course.getCode())) return 2; //student doesnt register this course
 		
 		if (examGrade.size() >0){
-			for (Course c : examGrade.keySet()){//course already added exam grade
-				if (c.equals(course)){
+			for (String s : examGrade.keySet()){//course already added exam grade
+				if (s.equals(course.getCode())){
 					return 3;
 				}
 			}
@@ -123,108 +163,97 @@ public class Student implements Serializable{
 			e.printStackTrace();
 			return -1;
 		}
-		examGrade.put(course, grade);
+		examGrade.put(course.getCode(), grade);
 		return 0;
 	}
 
 	/*
 		*
 		*method for adding coursework mark to this student
+		@return int exit value
+		0: success
+		1: Invalid Input
+		2: Student does not register for this course yet
+		3: grade of this course for this student has been added already
+		4: course weightage for this course has not been added
 		*
 	*/
 
 	public int addCourseworkMark(Course course){
-		Boolean cflag = false;
-		for (Course c : courses){
-			if (c.equals(course)){
-				cflag = true;
-				break;
-			}
-		}
-		if (cflag == false) { //student does not registered this course
-			return 2;
-		}
+		if (!existCourse(course.getCode())) return 2; //student does not register this coufse
+
 		if (courseworkGrade.size() > 0){
-			for (Course c : courseworkGrade.keySet()){ //course already added grade
-				if (c.equals(course)){
+			for (String s : courseworkGrade.keySet()){ //course already added grade
+				if (s.equals(course.getCode())){
 					return 3;
 				}
 			}
 		}
-		Map<String, Integer> cw = new HashMap<String, Integer>();
+
+		Map<String, Integer> cw = new HashMap<String, Integer>(); //new dictionary to store {component coursework: mark}
 		Scanner sc = new Scanner(System.in);
 		if (course.getCourseworkWeightage().size() ==0){ //coursework weightage has not been added yet
 			return 4;
 		}
-		for (String c : course.getCourseworkWeightage().keySet()){
+		for (String c : course.getCourseworkWeightage().keySet()){ //get component name e.g. Essay
 			try {
 				System.out.printf("Enter mark for %s/100: ", c);
 				int mark = sc.nextInt();
-				if (mark < 1){
-					throw new InputMismatchException();
+				if (mark < 1 || mark > 100){
+					throw new InputMismatchException(">>>>>>>>>>Component marks cannot be negative or larger than 100!<<<<<<<<<<\n\n\n");
 				}
 				cw.put(c, mark);
 			} catch(InputMismatchException e){
+				System.out.println(e.getMessage());
 				return 1; //invalid input
 			} catch(Exception e){
 				e.printStackTrace();
 				return -1;
 			}
-		courseworkGrade.put(course, cw);
+		courseworkGrade.put(course.getCode(), cw);
 		}
 		return 0;
 	}
+	
+	/*	
+		*
+		*Method for getting mark of this student
+		*@param course: getting mark of this course for this student
+		*@return double value mark of this student
+		*@return 0 if error
+		*
+	*/
+
  
 	public double getMark(Course course){
-		Boolean cflag = false;//flag for course
-		Boolean ccflag = false;//flag fpr exam grade
-		Boolean cccflag = false;//flag for course work grade
 		Course ctemp = new Course();
 		double result =0;
 
-		for (Course c : courses){//check if student registered for this course or not            
-			if (course.equals(c)){
-				cflag = true;
-				break;
-			}
-		}
-		if (cflag == false){ //student does not register this course
+		if (!existCourse(course.getCode())){
 			System.out.println(">>>>>>>>>>>>Student " + getName() + " does not register for this course<<<<<<<<<<<");
 			return 0;
 		}
 
-		for (Course c : examGrade.keySet()){ //Checking if exam grade has been added
-			if (c.equals(course)){	//course already added exam grade
-				ccflag =true;
-				break;
-			}	
-		}
-		if (ccflag == false){
+		if (examGrade.get(course.getCode()) == null){
 			System.out.println(">>>>>>>>>>>>Exam grade for this course has not been added<<<<<<<<<<<");
 			return 0;
 		}
 		//Calculating exam grade
-		Integer egrade = examGrade.get(course);
+		Integer egrade = examGrade.get(course.getCode());
 		Integer exam = course.getExamWeightage();
 		if (exam == 0){ //course assesment has not been added yet
 			System.out.println(">>>>>>>>>>>>Course assesment weightage for this courses has not been added<<<<<<<<<<");
 			return 0;
 		}
 		result += (egrade*exam) /100;
-		for (Course c : courseworkGrade.keySet()){ //Checking if coursework grade has been added
-			if (c.equals(course)){	//course already added coursework grade
-				cccflag =true;
-				break;
-			}	
-		}
-		if (cccflag == false){
-			System.out.println(">>>>>>>>>>>>Coursework grade for this course has not been added<<<<<<<<<<<");
+		if (courseworkGrade.get(course.getCode()) == null){
+			System.out.println(">>>>>>>>>>>>Coursework grade of student " + this.getName() + " for course " + course.getCode() + " has not been added<<<<<<<<<<<");
 			return 0;
 		}
 
 		//Calculating coursework grade
 		Map <String, Integer> courseworkw = course.getCourseworkWeightage(); //getting weightage for coursework from course
-		Map <String, Integer> courseworkg = courseworkGrade.get(course);//getting grade of course of this student
+		Map <String, Integer> courseworkg = courseworkGrade.get(course.getCode());//getting grade of course of this student
 		Iterator itw = courseworkw.entrySet().iterator();
 			while (itw.hasNext()){
 				Map.Entry pair = (Map.Entry) itw.next();
@@ -254,8 +283,9 @@ public class Student implements Serializable{
 		}
 		System.out.println("        ======================Student Transcript===================");
 		for (Course c : courses){
-			System.out.print("Course: " + c.getCode() + ", Mark: " + getMark(c)/20 + ", Exam: " + examGrade.get(c));
-			Map <String, Integer> cwg = courseworkGrade.get(c);
+			if (examGrade.get(c.getCode()) == null || courseworkGrade.get(c.getCode()) == null) continue; // no grade added yet
+			System.out.print("Course: " + c.getCode() + ", Mark: " + getMark(c)/20 + ", Exam: " + examGrade.get(c.getCode()));
+			Map <String, Integer> cwg = courseworkGrade.get(c.getCode());
 			Iterator it = cwg.entrySet().iterator();
 			while (it.hasNext()){
 				Map.Entry pair = (Map.Entry) it.next();
