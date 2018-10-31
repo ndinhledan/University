@@ -1,3 +1,18 @@
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+/////Class to implement course inside university, includes,
+/////Course name, code
+/////Boolean indicates whether course has tut and lab or not
+/////Professor as coordinator
+/////An int exam indicates the exam weightage for this course
+/////A dictionary contains coursework weightage for this course, String coursework component mapped to int coursework component weightage
+/////Int vacancy indicates vacancy of this course
+/////Arraylists of tutorials and labs containing tutorials and labs of this course
+/////Tutorial and lab contains an arraylist of student as well which holds the student registered to that particular tut or lab
+/////A dictionary student containing all students registered to this course, mapped to a String index
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -17,8 +32,8 @@ import java.io.IOException;
 		private int exam; //exam weightage
 		private Map<String, Integer> coursework = new HashMap<String, Integer>();//{component: weightage} coursework weightage
 		private int vacancy;
-		private ArrayList<Tutorial> tuts = new ArrayList<Tutorial>();//tuts of course
-		private ArrayList<Lab> labs = new ArrayList<Lab>();//labs of course
+		private List<Tutorial> tuts = new ArrayList<Tutorial>();//tuts of course
+		private List<Lab> labs = new ArrayList<Lab>();//labs of course
 		private Map<Student, String> students = new HashMap<Student, String>(); //{Student: Index}, index "Lecture" = no tut/lab
 		private static final long serialVersionUID = -3914670736074682579L;
 
@@ -30,7 +45,7 @@ import java.io.IOException;
 		private String index;
 		private int vacancy;
 		private int reg;
-		private ArrayList<Student> students = new ArrayList<Student>();
+		private List<Student> students = new ArrayList<Student>();
 		private static final long serialVersionUID = -1912256906115544712L;
 
 		public Tutorial(){}
@@ -111,7 +126,7 @@ import java.io.IOException;
 		private String index;
 		private int vacancy;
 		private int reg;
-		private ArrayList<Student> students = new ArrayList<Student>();
+		private List<Student> students = new ArrayList<Student>();
 		private static final long serialVersionUID = -1497047205835041867L;
 
 		public Lab(){}
@@ -614,7 +629,21 @@ import java.io.IOException;
 		}
 		System.out.println("       ====================Course Statistics========================");
 		for (Student s : students.keySet()){
-			System.out.println("Student name: " + s.getName() + ", Mark for this course: " + s.getMark(this)/20 + "/5");
+			System.out.print("Student name: " + s.getName() + ", Mark for this course: " + s.getMark(this)/20 + "/5");
+
+			//printing parts of grades
+			if (s.getExam().get(this.getCode()) != null){
+					System.out.print(", Exam: " + s.getExam().get(this.getCode()));
+				}
+			if (s.getCoursework().get(this.getCode()) != null){
+				Map <String, Integer> cwg = (Map <String, Integer>) s.getCoursework().get(this.getCode());
+				Iterator it = cwg.entrySet().iterator();
+				while (it.hasNext()){
+					Map.Entry pair = (Map.Entry) it.next();
+					System.out.print(", " + pair.getKey() + ": " + pair.getValue());
+				}
+			}
+			System.out.println();
 		}
 	}
 
@@ -669,6 +698,7 @@ import java.io.IOException;
 		*
 		*method for adding weightage to this course
 		*including exam weightage and coursework weightage
+		*allow exam to have 100% weightage or coursework to have 100% wieghtage
 		*allow to change weightage when there is no student registered yet
 		*
 		*@return an exit value

@@ -1,3 +1,15 @@
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+/////Class to implement student object inside university, includes
+/////Name, matric
+/////An arraylist of course represents the courses this student has registered to 
+/////A dictionary examGrade containing exam grade only for this student, String course code mapped to exam grade
+/////A dictionary courseworkGrade containing coursework grade for this student, String coursecode mapped to another
+///// dictionary, inside contains coursework components and grade
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -214,13 +226,36 @@ public class Student implements Serializable{
 		}
 		return 0;
 	}
+
+	/*
+		*
+		*method to return exam grade of this student
+		@return: Map<String, Integer>
+		*
+	*/
+
+	public Map getExam(){
+		return examGrade;
+	}
+
+	/*
+		*
+		*method to return coursework grade of this student
+		@return: Map<String, Map<String, Integer>
+		*
+	*/
+
+
+	public Map getCoursework(){
+		return courseworkGrade;
+	}
 	
 	/*	
 		*
 		*Method for getting mark of this student
-		*@param course: getting mark of this course for this student
+		*@param course: getting mark of this course for this student, can be passed from university or from student
 		*@return double value mark of this student
-		*@return 0 if error
+		*@return -1 if error
 		*
 	*/
 
@@ -231,30 +266,38 @@ public class Student implements Serializable{
 
 		if (!existCourse(course.getCode())){
 			System.out.println(">>>>>>>>>>>>Student " + getName() + " does not register for this course<<<<<<<<<<<");
-			return 0;
+			return -1;
 		}
 
-		if (examGrade.get(course.getCode()) == null){
-			System.out.println(">>>>>>>>>>>>Exam grade for this course has not been added<<<<<<<<<<<");
-			return 0;
+		if (examGrade.get(course.getCode()) == null && courseworkGrade.get(course.getCode()) == null){ //no grade found
+			if (examGrade.get(course.getCode()) == null){
+				System.out.println(">>>>>>>>>>>>Exam grade of student " +getName() +" for course " + course.getCode() + " has not been added<<<<<<<<<<<");
+			}
+			if(courseworkGrade.get(course.getCode()) == null){
+				System.out.println(">>>>>>>>>>>>Coursework grade of student " + this.getName() 
+				+ " for course " + course.getCode() + " has not been added<<<<<<<<<<<");
+			}
+			return -1;
 		}
-		//Calculating exam grade
-		Integer egrade = examGrade.get(course.getCode());
-		Integer exam = course.getExamWeightage();
-		if (exam == 0){ //course assesment has not been added yet
+		
+		//getting grades from student and weightage from course
+		Integer egrade = examGrade.get(course.getCode()); //getting exam grade
+		Integer exam = course.getExamWeightage(); //getting exam weightage from course
+		Map <String, Integer> courseworkg = courseworkGrade.get(course.getCode());//getting grade of course of this student
+		Map <String, Integer> courseworkw = course.getCourseworkWeightage(); //getting weightage for coursework from course
+		
+		//check for errors
+		if (exam == 0 && courseworkw.size() == 0){ //course assesment has not been added yet
 			System.out.println(">>>>>>>>>>>>Course assesment weightage for this courses has not been added<<<<<<<<<<");
-			return 0;
+			return -1;
 		}
+
+		//Calculating exam grade
 		result += (egrade*exam) /100;
-		if (courseworkGrade.get(course.getCode()) == null){
-			System.out.println(">>>>>>>>>>>>Coursework grade of student " + this.getName() + " for course " + course.getCode() + " has not been added<<<<<<<<<<<");
-			return 0;
-		}
 
 		//Calculating coursework grade
-		Map <String, Integer> courseworkw = course.getCourseworkWeightage(); //getting weightage for coursework from course
-		Map <String, Integer> courseworkg = courseworkGrade.get(course.getCode());//getting grade of course of this student
-		Iterator itw = courseworkw.entrySet().iterator();
+		if (courseworkw.size() != 0){ // if coursework has weightage 
+			Iterator itw = courseworkw.entrySet().iterator();
 			while (itw.hasNext()){
 				Map.Entry pair = (Map.Entry) itw.next();
 				String component = (String) pair.getKey();
@@ -262,6 +305,7 @@ public class Student implements Serializable{
 				Integer w = (Integer) pair.getValue();
 				result += (cgrade*w)/100;
 			}
+		}
 		return result;
 	}
 
@@ -274,24 +318,35 @@ public class Student implements Serializable{
 
 	public void printTranscript(){
 		if (courses.size() == 0){
-			System.out.println(">>>>>>>>>>Student has not registered for any course<<<<<<<<<<");
+			System.out.println(">>>>>>>>>>Student " + getName() +" has not registered for any course<<<<<<<<<<");
 			return;
 		}
-		if (examGrade.size() == 0 || courseworkGrade.size() == 0){
-			System.out.println(">>>>>>>>>>Mark for this student has not been added<<<<<<<<<<");
+		if (examGrade.size() == 0 && courseworkGrade.size() == 0){
+			System.out.println(">>>>>>>>>>No mark for student "+getName()+" has been added<<<<<<<<<<");
 			return;
 		}
 		System.out.println("        ======================Student Transcript===================");
 		for (Course c : courses){
-			if (examGrade.get(c.getCode()) == null || courseworkGrade.get(c.getCode()) == null) continue; // no grade added yet
-			System.out.print("Course: " + c.getCode() + ", Mark: " + getMark(c)/20 + ", Exam: " + examGrade.get(c.getCode()));
-			Map <String, Integer> cwg = courseworkGrade.get(c.getCode());
-			Iterator it = cwg.entrySet().iterator();
-			while (it.hasNext()){
-				Map.Entry pair = (Map.Entry) it.next();
-				System.out.print(", " + pair.getKey() + ": " + pair.getValue());
+			if (examGrade.get(c.getCode()) == null && courseworkGrade.get(c.getCode()) == null) continue; // no grade added yet
+
+			if (getMark(c) != -1){//if no error prints out
+				//printing overall grade
+				System.out.print("Course: " + c.getCode() + ", Mark: " + getMark(c)/20);
+
+				//printing parts of grades
+				if (examGrade.get(c.getCode()) != null){
+					System.out.print(", Exam: " + examGrade.get(c.getCode()));
+				}
+				if (courseworkGrade.get(c.getCode()) != null){
+					Map <String, Integer> cwg = courseworkGrade.get(c.getCode());
+					Iterator it = cwg.entrySet().iterator();
+					while (it.hasNext()){
+						Map.Entry pair = (Map.Entry) it.next();
+						System.out.print(", " + pair.getKey() + ": " + pair.getValue());
+					}
+				}
+				System.out.println();
 			}
-			System.out.println();
 		}
 	}
 

@@ -1,3 +1,14 @@
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+///////Class to implemets University, includes
+///////3 arraylists, containing courses, students and professors of this university
+///////
+///////Coursework weighatge is recorded inside course
+///////While marks are recorded inside student
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -5,7 +16,6 @@ import java.util.InputMismatchException;
 import java.io.IOException;
 import java.io.EOFException;
 
-//close scanner when exit
 public class University{
 	private static String name;
 	private static List<Course> courses = new ArrayList<Course>(); //list of courses of university
